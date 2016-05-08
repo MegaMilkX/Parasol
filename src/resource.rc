@@ -1,0 +1,27 @@
+1 VERSIONINFO
+FILEVERSION 1,0,0,44
+PRODUCTVERSION 1,0,0,0
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "041904E3"
+  {
+   VALUE "Comments", "Comments\000"
+   VALUE "CompanyName", "MegaMilk\000"
+   VALUE "FileDescription", "REDREDRED\000"
+   VALUE "FileVersion", "1.0.0.0\000"
+   VALUE "InternalName", "Suiseiseki\000"
+   VALUE "LegalCopyright", "Fuck off\000"
+   VALUE "LegalTrademarks", "\000"
+   VALUE "OriginalFilename", "game.exe\000"
+   VALUE "ProductName", "TheGame\000"
+   VALUE "ProductVersion", "1.0.0.0\000"
+  }
+ }
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 0x0419, 0x04E3
+ }
+}
+
+MAINICON ICON "icon.ico"
