@@ -15,6 +15,21 @@ public:
     bool Compile();
     void Bind();
     std::string StatusString(){ return status_string; }
+
+    void Uniform(std::string& name, float value);
+    void Uniform(std::string& name, vec2f& value);
+    void Uniform(std::string& name, vec3f& value);
+    void Uniform(std::string& name, vec4f& value);
+    void Uniform(std::string& name, int value);
+    void Uniform(std::string& name, vec2i& value);
+    void Uniform(std::string& name, vec3i& value);
+    void Uniform(std::string& name, vec4i& value);
+    void Uniform(std::string& name, unsigned int value);
+    void Uniform(std::string& name, vec2ui& value);
+    void Uniform(std::string& name, vec3ui& value);
+    void Uniform(std::string& name, vec4ui& value);
+    void Uniform(std::string& name, mat3f& value);
+    void Uniform(std::string& name, mat4f& value);
 private:
     unsigned int CompileStage(GFXS::Stage& stage, unsigned int type);
 
