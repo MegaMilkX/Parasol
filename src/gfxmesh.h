@@ -17,9 +17,9 @@ struct Vertex
 {
     VERTEX
     (
-        (AttrPosition) position,
-        (AttrNormal) normal,
-        (AttrUV) uv
+        (VertexAttrib::Position<0>) position,
+        (VertexAttrib::Normal<0>) normal,
+        (VertexAttrib::UV<0>) uv
     )
 };
 
@@ -95,8 +95,8 @@ void GFXMesh::SetVertices(std::vector<T> vertices)
     size_t offset = 0;
     for(int i = T::attribCount() - 1; i >= 0; --i)
     {
-        int attrIndex = T::attribCount() - 1 - i;
         AttrInfo attrInfo = T::getAttrInfo(i);
+        int attrIndex = attrInfo.index;
         glVertexAttribPointer(attrIndex,                          /*attrib index*/
                               attrInfo.elemCount,                 /*attrib element count*/
                               type_to_gltype[attrInfo.elemType],  /*element type*/
