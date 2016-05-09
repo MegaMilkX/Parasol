@@ -13,6 +13,7 @@
 
 struct AttrInfo
 {
+    unsigned int index;
     short elemCount;
     int elemType;
     size_t size;
