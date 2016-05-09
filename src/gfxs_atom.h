@@ -8,7 +8,7 @@
 #include "gfxs_stage.h"
 
 #define DEF_SHADER_UNIFORM(TYPE, NAME) \
-    class NAME : public Atom \
+    class NAME : public Uniform \
     { \
     public: \
         NAME(unsigned int id = 0) : input_id(id) {} \
@@ -19,11 +19,16 @@
             std::string eval; \
             eval += ReferenceName(); \
             stage->AddGlobalLine(Declaration() + ";"); \
+             \
             return eval; \
         } \
         std::string Declaration() \
         { \
             return std::string("uniform ") + TYPE().InternalName() + " " + ReferenceName(); \
+        } \
+        void operator=(const float& value) \
+        { \
+             \
         } \
     protected: \
         std::string OriginalRefName() \
@@ -212,7 +217,8 @@ namespace GFXS
     class Uniform : public Atom
     {
     public:
-        void Update();
+        virtual void Update() {}
+        
     };
 
     class VertexAtom : public Atom {};
