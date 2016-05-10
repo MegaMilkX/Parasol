@@ -44,6 +44,7 @@ struct AttrInfo
         info.elemCount = TYPEOF(arg)::elemCount(); \
         info.elemType = TYPEOF(arg)::elemType(); \
         info.size = TYPEOF(arg)::size(); \
+        info.index = TYPEOF(arg)::index(); \
         return info; \
     }
 

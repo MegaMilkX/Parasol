@@ -1,5 +1,7 @@
 #include "gfxshader.h"
 
+#include "vertex_attrib.h"
+
 GFXShader::GFXShader() : program(0), status_string("") {}
 
 void GFXShader::operator=(GFXS::VertexAtom& atom)
@@ -40,6 +42,18 @@ bool GFXShader::Compile()
         glGetProgramInfoLog(program, InfoLogLength, NULL, &ProgramErrorMessage[0]);
         status_string += &ProgramErrorMessage[0];
     }
+
+    for (unsigned int i = 0; i < uniform_names.size(); ++i)
+    {
+        uniform_locations.push_back(glGetUniformLocation(program, uniform_names[i].c_str()));
+    }
+
+    for (unsigned int i = 0; i < attrib_names.size(); ++i)
+    {
+        // BindAttribLocation to GFXGlobal<TAGAttrib>::Get(attrib_names[i]).DataIndex()
+        unsigned int idx = GFXGlobal<TAGAttrib>::Get(attrib_names[i]).DataIndex();
+        glBindAttribLocation(program, idx, attrib_names[i].c_str());
+    }
     
     return true;
 }
@@ -48,19 +62,19 @@ void GFXShader::Bind()
 {
     glUseProgram(program);
     
-    // TODO:
     // Send ALL uniform data to the shader
-
+    // TODO: check if uniform was updated since last time and only then send it
     for (unsigned int i = 0; i < uniforms.size(); ++i)
     {
-        uniforms[i].Update();
+        uniforms[i]->Uniform(uniform_locations[i]);
     }
 }
 
 unsigned int GFXShader::CompileStage(GFXS::Stage& stage, unsigned int type)
 {
     std::string source = stage.Evaluate();
-    source = "#version 440\n" + source;
+    // TODO: Add shader model deduction on runtime
+    source = "#version 450\n" + source;
     
     unsigned int shader = glCreateShader(type);
     const char* c_str = source.c_str();
@@ -78,7 +92,14 @@ unsigned int GFXShader::CompileStage(GFXS::Stage& stage, unsigned int type)
         glGetShaderInfoLog(shader, InfoLogLength, NULL, &ShaderErrorMessage[0]);
         status_string += &ShaderErrorMessage[0];
     }
-    
+
+    std::vector<IGFXGlobal*> unfrms = stage.GetGlobals();
+    std::vector<std::string> names = stage.GetGlobalNames();
+    std::vector<std::string> attr_names = stage.GetAttribNames();
+    uniforms.insert(uniforms.end(), unfrms.begin(), unfrms.end());
+    uniform_names.insert(uniform_names.end(), names.begin(), names.end());
+    attrib_names.insert(attrib_names.end(), attr_names.begin(), attr_names.end());
+
     return shader;
 }
 

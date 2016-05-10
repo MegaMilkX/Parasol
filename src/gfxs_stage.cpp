@@ -25,4 +25,16 @@ namespace GFXS
             it->second.Link(*this);
         }
     }
+
+    void Stage::AddUniform(GFXS::Uniform* uni)
+    {
+        globals.push_back(uni->NewGlobalPtr());
+        global_names.push_back(uni->ReferenceName());
+    }
+
+    void Stage::AddAttrib(GFXS::Input* attrib)
+    {
+        attrib_names.push_back(attrib->ReferenceName());
+    }
+
 }

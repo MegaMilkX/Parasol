@@ -1,8 +1,6 @@
 #ifndef _GFXSHADER_H_
 #define _GFXSHADER_H_
 
-#include "glextutil.h"
-
 #include "gfxs_atom.h"
 
 class GFXShader
@@ -39,7 +37,10 @@ private:
     unsigned int program;
     std::string status_string;
 
-    std::vector<GFXS::Uniform> uniforms;
+    std::vector<std::string> attrib_names;
+    std::vector<std::string> uniform_names;
+    std::vector<IGFXGlobal*> uniforms;
+    std::vector<unsigned int> uniform_locations;
 };
 
 #endif

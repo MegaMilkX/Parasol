@@ -96,15 +96,15 @@ void GFXMesh::SetVertices(std::vector<T> vertices)
     for(int i = T::attribCount() - 1; i >= 0; --i)
     {
         AttrInfo attrInfo = T::getAttrInfo(i);
-        int attrIndex = attrInfo.index;
-        glVertexAttribPointer(attrIndex,                          /*attrib index*/
+        
+        glVertexAttribPointer(attrInfo.index,                     /*attrib index*/
                               attrInfo.elemCount,                 /*attrib element count*/
                               type_to_gltype[attrInfo.elemType],  /*element type*/
                               GL_FALSE,                           /*normalize?*/
                               sizeof(T),                          /*stride*/
                               (void*)offset);                     /*offset*/
         offset += attrInfo.size;
-        glEnableVertexAttribArray(attrIndex);
+        glEnableVertexAttribArray(attrInfo.index);
     }
 }
 

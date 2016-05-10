@@ -7,11 +7,12 @@
 
 #include "gfxs_stage.h"
 
-#define DEF_SHADER_UNIFORM(TYPE, NAME) \
+#define DEF_SHADER_UNIFORM(TYPE, C_TYPE, NAME) \
     class NAME : public Uniform \
     { \
     public: \
-        NAME(unsigned int id = 0) : input_id(id) {} \
+        NAME(unsigned int id = 0) : input_id(id), global(0) {} \
+        ~NAME() { delete global; } \
         NAME* Clone() const { return new NAME(*this); } \
         TYPE* CloneTypeInstance() const { return new TYPE(); } \
         std::string Evaluate(Stage* stage) \
@@ -19,16 +20,16 @@
             std::string eval; \
             eval += ReferenceName(); \
             stage->AddGlobalLine(Declaration() + ";"); \
-             \
+            stage->AddUniform(this); \
             return eval; \
         } \
         std::string Declaration() \
         { \
             return std::string("uniform ") + TYPE().InternalName() + " " + ReferenceName(); \
         } \
-        void operator=(const float& value) \
+        IGFXGlobal* NewGlobalPtr() \
         { \
-             \
+            return new GFXGlobal<C_TYPE>(GFXGlobal<C_TYPE>::Get(ReferenceName())); \
         } \
     protected: \
         std::string OriginalRefName() \
@@ -36,10 +37,11 @@
             return std::string(#NAME) + std::to_string(input_id); \
         } \
         unsigned int input_id; \
+        IGFXGlobal* global; \
     }
 
 #define DEF_SHADER_INPUT(TYPE, NAME) \
-    class NAME : public Atom \
+    class NAME : public Input \
     { \
     public: \
         NAME(unsigned int id = 0) : input_id(id) {} \
@@ -50,6 +52,7 @@
             std::string eval; \
             eval += ReferenceName(); \
             stage->AddGlobalLine(Declaration() + ";"); \
+            stage->AddAttrib(this); \
             return eval; \
         } \
         void Link(Stage& stage) \
@@ -60,7 +63,7 @@
         } \
         std::string Declaration() \
         { \
-        return std::string("in ") + TYPE().InternalName() + " " + ReferenceName(); \
+            return std::string("in ") + TYPE().InternalName() + " " + ReferenceName(); \
         } \
     protected: \
         std::string OriginalRefName() \
@@ -160,16 +163,13 @@
 #define DEF_ATOM_UNIFORMS(...) \
     void EvalUniforms(Stage* stage) \
     { \
-        std::string block; \
-        block += "uniform " + ReferenceName() + "Block\n{\n"; \
-         \
         FOR_EACH_ARG(ADD_UNIFORM, __VA_ARGS__) \
-        block += "};\n\n"; \
-        stage->AddGlobalLine(block); \
     }
 
-#define ADD_INPUT(ID, ARG) stage->AddGlobalLine(ARG.Declaration() + ";");
-#define ADD_UNIFORM(ID, ARG) block += "    " + ARG.Declaration() + ";\n";
+#define ADD_INPUT(ID, ARG) stage->AddGlobalLine(ARG.Declaration() + ";"); \
+    stage->AddAttrib(& ARG);
+#define ADD_UNIFORM(ID, ARG) stage->AddGlobalLine(ARG.Declaration() + ";"); \
+    stage->AddUniform(& ARG);
 
 #define NO_INPUTS(...)
 #define NO_UNIFORMS(...)
@@ -217,8 +217,13 @@ namespace GFXS
     class Uniform : public Atom
     {
     public:
-        virtual void Update() {}
+        virtual IGFXGlobal* NewGlobalPtr() = 0;
         
+    };
+
+    class Input : public Atom
+    {
+
     };
 
     class VertexAtom : public Atom {};
@@ -228,10 +233,10 @@ namespace GFXS
     // Uniforms
     // =======================
 
-    DEF_SHADER_UNIFORM(Sampler2D, Texture2D);
-    DEF_SHADER_UNIFORM(Mat4, MatrixModel);
-    DEF_SHADER_UNIFORM(Mat4, MatrixView);
-    DEF_SHADER_UNIFORM(Mat4, MatrixPerspective);
+    DEF_SHADER_UNIFORM(Sampler2D, int, Texture2D);
+    DEF_SHADER_UNIFORM(Mat4, mat4f, MatrixModel);
+    DEF_SHADER_UNIFORM(Mat4, mat4f, MatrixView);
+    DEF_SHADER_UNIFORM(Mat4, mat4f, MatrixPerspective);
 
     // =======================
     // Functions
@@ -256,7 +261,7 @@ namespace GFXS
     DEF_SHADER_ATOM_VERTEX(
         Vec4,
         Position3D,
-        "return MatrixModel0 * MatrixView0 * MatrixPerspective0 * vec4(pos, 1.0);",
+        "return MatrixPerspective0 * MatrixView0 * MatrixModel0 * vec4(pos, 1.0);",
         NO_INPUTS(),
         DEF_ATOM_UNIFORMS(MatrixModel(), MatrixView(), MatrixPerspective()),
         DEF_ATOM_ARGS((Vec3)pos)

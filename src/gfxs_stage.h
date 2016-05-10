@@ -8,9 +8,13 @@
 
 #include "gfxs_slot.h"
 
+#include "gfxglobal.h"
+
 namespace GFXS
 {
     class Atom;
+    class Uniform;
+    class Input;
     class Stage
     {
     public:
@@ -38,7 +42,16 @@ namespace GFXS
 
             return source;
         }
+
+        void AddUniform(GFXS::Uniform* uni);
+        void AddAttrib(GFXS::Input* attrib);
+        std::vector<IGFXGlobal*> GetGlobals() { return globals; }
+        std::vector<std::string> GetGlobalNames() { return global_names; }
+        std::vector<std::string> GetAttribNames() { return attrib_names; }
     protected:
+        std::vector<IGFXGlobal*> globals;
+        std::vector<std::string> global_names;
+        std::vector<std::string> attrib_names;
         std::set<std::string> global_lines;
         std::map<std::string, Slot> slots; // Outputs of a shader stage
 
