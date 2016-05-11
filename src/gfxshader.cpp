@@ -14,6 +14,16 @@ void GFXShader::operator=(GFXS::PixelAtom& atom)
     fragment_stage["frag_out"] = atom;
 }
 
+void GFXShader::Transform(GFXS::Atom& atom)
+{
+    (vertex_stage["gl_Position"] = atom).HideOutputDeclaration(true);
+}
+
+void GFXShader::Color(GFXS::Atom& atom)
+{
+    fragment_stage["frag_out"] = atom;
+}
+
 bool GFXShader::Compile()
 {
     vertex_stage.Link(fragment_stage);
@@ -29,6 +39,15 @@ bool GFXShader::Compile()
     program = glCreateProgram();
     glAttachShader(program, v_stage);
     glAttachShader(program, f_stage);
+
+    attrib_names = vertex_stage.GetAttribNames();
+    for (unsigned int i = 0; i < attrib_names.size(); ++i)
+    {
+        // BindAttribLocation to GFXGlobal<TAGAttrib>::Get(attrib_names[i]).DataIndex()
+        unsigned int idx = GFXGlobal<TAGAttrib>::Get(attrib_names[i]).DataIndex();
+        glBindAttribLocation(program, idx, attrib_names[i].c_str());
+    }
+
     glLinkProgram(program);
 
     GLint Result = GL_FALSE;
@@ -48,13 +67,6 @@ bool GFXShader::Compile()
         uniform_locations.push_back(glGetUniformLocation(program, uniform_names[i].c_str()));
     }
 
-    for (unsigned int i = 0; i < attrib_names.size(); ++i)
-    {
-        // BindAttribLocation to GFXGlobal<TAGAttrib>::Get(attrib_names[i]).DataIndex()
-        unsigned int idx = GFXGlobal<TAGAttrib>::Get(attrib_names[i]).DataIndex();
-        glBindAttribLocation(program, idx, attrib_names[i].c_str());
-    }
-    
     return true;
 }
 
@@ -68,6 +80,22 @@ void GFXShader::Bind()
     {
         uniforms[i]->Uniform(uniform_locations[i]);
     }
+}
+
+bool GFXShader::Validate(std::string& error_str)
+{
+    int result;
+    int info_log_len;
+    glValidateProgram(program);
+    glGetProgramiv(program, GL_VALIDATE_STATUS, &result);
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &info_log_len);
+    if (info_log_len > 1)
+    {
+        std::vector<char> ShaderErrorMessage(info_log_len + 1);
+        glGetProgramInfoLog(program, info_log_len, NULL, &ShaderErrorMessage[0]);
+        error_str = &ShaderErrorMessage[0];
+    }
+    return result;
 }
 
 unsigned int GFXShader::CompileStage(GFXS::Stage& stage, unsigned int type)
@@ -95,10 +123,9 @@ unsigned int GFXShader::CompileStage(GFXS::Stage& stage, unsigned int type)
 
     std::vector<IGFXGlobal*> unfrms = stage.GetGlobals();
     std::vector<std::string> names = stage.GetGlobalNames();
-    std::vector<std::string> attr_names = stage.GetAttribNames();
     uniforms.insert(uniforms.end(), unfrms.begin(), unfrms.end());
     uniform_names.insert(uniform_names.end(), names.begin(), names.end());
-    attrib_names.insert(attrib_names.end(), attr_names.begin(), attr_names.end());
+    
 
     return shader;
 }

@@ -10,8 +10,12 @@ public:
     void operator=(GFXS::VertexAtom& atom);
     void operator=(GFXS::PixelAtom& atom);
 
+    void Transform(GFXS::Atom& atom);
+    void Color(GFXS::Atom& atom);
+
     bool Compile();
     void Bind();
+    bool Validate(std::string& error_str);
     std::string StatusString(){ return status_string; }
 
     void Uniform(std::string& name, float value);
