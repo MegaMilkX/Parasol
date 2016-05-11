@@ -44,6 +44,7 @@ extern PFNGLDELETESHADERPROC glDeleteShader;
 extern PFNGLLINKPROGRAMPROC glLinkProgram;
 extern PFNGLUSEPROGRAMPROC glUseProgram;
 extern PFNGLDELETEPROGRAMPROC glDeleteProgram;
+extern PFNGLVALIDATEPROGRAMPROC glValidateProgram;
 
 extern PFNGLUNIFORM1FPROC glUniform1f;
 extern PFNGLUNIFORM2FPROC glUniform2f;
