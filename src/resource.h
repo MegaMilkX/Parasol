@@ -5,6 +5,8 @@
 #include <map>
 #include <vector>
 
+#include <iostream>
+
 #include "datahandle.h"
 
 #include "resourcereader.h"
@@ -68,8 +70,11 @@ ResHdl<T> Resource<T>::Get(std::string name)
     else
     {
         T data = T::Create();
-        if(!ReadFile(name, data))
+        if (!ReadFile(name, data))
+        {
+            std::cout << "Load failed\n";
             return ResHdl<T>();
+        }
         //
         ResHdl<T> res = ResHdl<T>::Create(data);
         resources.insert(std::make_pair(name, res));
