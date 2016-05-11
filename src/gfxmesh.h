@@ -96,7 +96,6 @@ void GFXMesh::SetVertices(std::vector<T> vertices)
     for(int i = T::attribCount() - 1; i >= 0; --i)
     {
         AttrInfo attrInfo = T::getAttrInfo(i);
-        
         glVertexAttribPointer(attrInfo.index,                     /*attrib index*/
                               attrInfo.elemCount,                 /*attrib element count*/
                               type_to_gltype[attrInfo.elemType],  /*element type*/
