@@ -152,7 +152,7 @@
 #define ARG_SLOT_NAME(ID, ARG) \
     temp = #ARG; \
     temp.erase(temp.begin() + temp.find_first_of("("), temp.begin() + temp.find_last_of(")") + 1); \
-    args += TYPEOF(ARG)().InternalName() + " " + temp + ", ";
+    args += "in " + TYPEOF(ARG)().InternalName() + " " + temp + ", ";
 
 #define DEF_ATOM_INPUTS(...) \
     void EvalInputs(Stage* stage) \
@@ -245,7 +245,7 @@ namespace GFXS
     DEF_SHADER_ATOM_PIXEL(
         Vec4,
         Texture2DColor,
-        "return texture(texture_sampler, uv);",
+        "return texture2D(texture_sampler, uv);",
         NO_INPUTS(),
         NO_UNIFORMS(),
         DEF_ATOM_ARGS((Sampler2D)texture_sampler, (Vec2)uv)
@@ -258,6 +258,30 @@ namespace GFXS
         NO_UNIFORMS(),
         NO_ARGS()
         );
+    DEF_SHADER_ATOM_PIXEL(
+        Vec4,
+        UV_TO_RGBA,
+        "return vec4(uv.x, uv.y, 0.0, 1.0);",
+        NO_INPUTS(),
+        NO_UNIFORMS(),
+        DEF_ATOM_ARGS((Vec2)uv)
+    );
+    DEF_SHADER_ATOM_PIXEL(
+        Vec4,
+        Texture2DScreen,
+        "return texture2D(texture_sampler, gl_FragCoord.st * 100.0);",
+        NO_INPUTS(),
+        NO_UNIFORMS(),
+        DEF_ATOM_ARGS((Sampler2D)texture_sampler, (Float)scale)
+    );
+    DEF_SHADER_ATOM_PIXEL(
+        Vec4,
+        Multiply3f,
+        "return vec4(a, 1.0);",
+        NO_INPUTS(),
+        NO_UNIFORMS(),
+        DEF_ATOM_ARGS((Vec3)a, (Vec3)b)
+    );
     DEF_SHADER_ATOM_VERTEX(
         Vec4,
         Position3D,
