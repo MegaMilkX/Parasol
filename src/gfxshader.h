@@ -1,11 +1,21 @@
 #ifndef _GFXSHADER_H_
 #define _GFXSHADER_H_
 
+#include "macro\macro_readers_def.h"
+
 #include "gfxs_atom.h"
 
 class GFXShader
 {
 public:
+    READERS
+    (
+        (ReadXML) "xml"
+    );
+    bool ReadXML(File file);
+
+    static GFXShader Create();
+
     GFXShader();
     void operator=(GFXS::VertexAtom& atom);
     void operator=(GFXS::PixelAtom& atom);

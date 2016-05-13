@@ -2,6 +2,49 @@
 
 #include "vertex_attrib.h"
 
+#include "external/tinyxml2.h"
+
+#include <iostream>
+
+bool GFXShader::ReadXML(File file)
+{
+    tinyxml2::XMLDocument doc;
+    file.Seek(0);
+    size_t bytes = file.Size();
+    std::string xml = file.Read<std::string>(bytes);
+    if (doc.Parse(xml.c_str(), bytes) != tinyxml2::XML_NO_ERROR)
+        return false;
+
+    tinyxml2::XMLElement* elem = doc.RootElement();
+    if (elem->Name() != std::string("Shader"))
+        return false;
+
+    elem = elem->FirstChildElement();
+    while (elem != 0)
+    {
+        std::cout << elem->Name() << std::endl;
+        if (elem->Name() == std::string("Transform"))
+        {
+
+        }
+        else if (elem->Name() == std::string("Color"))
+        {
+
+        }
+
+        elem = elem->NextSiblingElement();
+    }
+
+    Compile();
+
+    return true;
+}
+
+GFXShader GFXShader::Create()
+{
+    return GFXShader();
+}
+
 GFXShader::GFXShader() : program(0), status_string("") {}
 
 void GFXShader::operator=(GFXS::VertexAtom& atom)
