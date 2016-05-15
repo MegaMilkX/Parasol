@@ -1,6 +1,8 @@
 #ifndef _GFXSHADER_H_
 #define _GFXSHADER_H_
 
+#include "external/tinyxml2.h"
+
 #include "macro\macro_readers_def.h"
 
 #include "gfxs_atom.h"
@@ -44,6 +46,8 @@ public:
     void Uniform(std::string& name, mat4f& value);
 private:
     unsigned int CompileStage(GFXS::Stage& stage, unsigned int type);
+
+    GFXS::Atom* BuildOutputTree(const tinyxml2::XMLElement* elem);
 
     GFXS::Stage vertex_stage;
     GFXS::Stage fragment_stage;

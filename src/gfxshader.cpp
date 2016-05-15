@@ -2,8 +2,6 @@
 
 #include "vertex_attrib.h"
 
-#include "external/tinyxml2.h"
-
 #include <iostream>
 
 bool GFXShader::ReadXML(File file)
@@ -20,16 +18,31 @@ bool GFXShader::ReadXML(File file)
         return false;
 
     elem = elem->FirstChildElement();
-    while (elem != 0)
+    while (elem)
     {
-        std::cout << elem->Name() << std::endl;
         if (elem->Name() == std::string("Transform"))
         {
-
+            tinyxml2::XMLElement* e = elem->FirstChildElement();
+            if (elem)
+            {
+                GFXS::Atom* atom = BuildOutputTree(e);
+                Transform(*atom);
+                delete atom;
+            }
+            else
+                (vertex_stage["gl_Position"]).HideOutputDeclaration(true);
         }
         else if (elem->Name() == std::string("Color"))
         {
-
+            tinyxml2::XMLElement* e = elem->FirstChildElement();
+            if (elem)
+            {
+                GFXS::Atom* atom = BuildOutputTree(e);
+                Color(*atom);
+                delete atom;
+            }
+            else
+                fragment_stage["frag_out"];
         }
 
         elem = elem->NextSiblingElement();
@@ -171,6 +184,38 @@ unsigned int GFXShader::CompileStage(GFXS::Stage& stage, unsigned int type)
     
 
     return shader;
+}
+
+GFXS::Atom* GFXShader::BuildOutputTree(const tinyxml2::XMLElement* elem)
+{
+    GFXS::Atom* atom = GFXS::Atom::GetPtr(elem->Name());
+    if (!atom)
+        return 0;
+
+    atom = atom->Clone();
+
+    elem = elem->FirstChildElement();
+    int argument_index = 0;
+    while (elem != 0)
+    {
+        GFXS::Atom* arg_atom = BuildOutputTree(elem);
+        if (arg_atom)
+        {
+            const tinyxml2::XMLAttribute* attrib = elem->FirstAttribute();
+            while (attrib)
+            {
+                arg_atom->SetParameter(attrib->Name(), attrib->Value());
+                attrib = attrib->Next();
+            }
+            
+            *(atom->ArgumentSlot(argument_index)) = *arg_atom;
+            delete arg_atom;
+        }
+        argument_index++;
+        elem = elem->NextSiblingElement();
+    }
+
+    return atom;
 }
 
 void GFXShader::Uniform(std::string& name, float value) { glUniform1f(glGetUniformLocation(program, name.c_str()), value); }
