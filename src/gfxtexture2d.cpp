@@ -63,6 +63,25 @@ bool GFXTexture2D::ReadPNG(File file)
     return true;
 }
 
+void GFXTexture2D::Bitmap(unsigned char* data, int w, int h, int bpp)
+{
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, buffer);
+    if (bpp == 1)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RED, GL_UNSIGNED_BYTE, data);
+    else if (bpp == 3)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    else if (bpp == 4)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    else
+        return;
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
+}
+
 void GFXTexture2D::Use(unsigned int layer)
 {
     glActiveTexture(GL_TEXTURE0 + layer);

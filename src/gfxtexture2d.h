@@ -15,6 +15,8 @@ public:
     bool ReadPNG(File file);
     
     static GFXTexture2D Create();
+
+    void Bitmap(unsigned char* data, int w, int h, int bpp);
     
     void Use(unsigned int layer = 0);
 private:
