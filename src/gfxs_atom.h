@@ -31,6 +31,15 @@
         { \
             return new GFXGlobal<C_TYPE>(GFXGlobal<C_TYPE>::Get(ReferenceName())); \
         } \
+        void SetParameter(std::string name, std::string value) \
+        { \
+            if(name == "id") \
+            { \
+                try \
+                { input_id = std::stoi(value); } \
+                catch (...) {} \
+            } \
+        } \
     protected: \
         std::string OriginalRefName() \
         { \
@@ -64,6 +73,15 @@
         std::string Declaration() \
         { \
             return std::string("in ") + TYPE().InternalName() + " " + ReferenceName(); \
+        } \
+        void SetParameter(std::string name, std::string value) \
+        { \
+            if(name == "id") \
+            { \
+                try \
+                { input_id = std::stoi(value); } \
+                catch (...) {} \
+            } \
         } \
     protected: \
         std::string OriginalRefName() \
@@ -180,6 +198,8 @@ namespace GFXS
     class Atom
     {
     public:
+        static Atom* GetPtr(std::string name);
+
         Atom() : ref_name(""){}
         virtual ~Atom() {}
         virtual Atom* Clone() const = 0;
@@ -197,6 +217,8 @@ namespace GFXS
 
         virtual void Link(Stage& stage){ }
 
+        virtual void SetParameter(std::string name, std::string value) {}
+
         virtual void Rename(const std::string& name)
         {
             ref_name = name;
@@ -212,6 +234,8 @@ namespace GFXS
         virtual std::string OriginalRefName() = 0;
 
         std::string ref_name;
+
+        static std::map<std::string, Atom*> name_to_atom;
     };
 
     class Uniform : public Atom
@@ -244,7 +268,7 @@ namespace GFXS
 
     DEF_SHADER_ATOM_PIXEL(
         Vec4,
-        Texture2DColor,
+        TextureColor2D,
         "return texture2D(texture_sampler, uv);",
         NO_INPUTS(),
         NO_UNIFORMS(),
