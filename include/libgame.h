@@ -9,6 +9,10 @@
 #include "../src/gfxshader.h"
 #include "../src/gfxmesh.h"
 #include "../src/gfxtexture2d.h"
+
+#include "../src/gfxfont.h"
+#include "../src/gfxtext.h"
+
 #include "../src/scene.h"
 #include "../src/camera.h"
 
