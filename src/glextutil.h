@@ -85,12 +85,22 @@ extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
 extern PFNGLBINDATTRIBLOCATIONPROC glBindAttribLocation;
 extern PFNGLGETATTRIBLOCATIONPROC glGetAttribLocation;
 
+//========================
+// Textures
+//========================
+
 extern PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
 extern PFNGLTEXPARAMETERIIVPROC glTexParameterIiv;
 extern PFNGLTEXPARAMETERIUIVPROC glTexParameterIuiv;
 extern PFNGLGETTEXPARAMETERIIVPROC glGetTexParameterIiv;
 extern PFNGLGETTEXPARAMETERIUIVPROC glGetTexParameterIuiv;
 extern PFNGLACTIVETEXTUREPROC glActiveTexture;
+
+//========================
+// Framebuffers
+//========================
+extern PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers;
+extern PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer;
 
 void WGLEXTLoadFunctions();
 void GLEXTLoadFunctions();

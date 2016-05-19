@@ -76,6 +76,9 @@ PFNGLGETTEXPARAMETERIIVPROC glGetTexParameterIiv;
 PFNGLGETTEXPARAMETERIUIVPROC glGetTexParameterIuiv;
 PFNGLACTIVETEXTUREPROC glActiveTexture;
 
+PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers;
+PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer;
+
 HMODULE opengl32Module = NULL;
 
 void* GLEXTLoadFunction(const char* name)
@@ -180,6 +183,9 @@ void GLEXTLoadFunctions()
     GLPROCLOAD(PFNGLGETTEXPARAMETERIIVPROC, glGetTexParameterIiv);
     GLPROCLOAD(PFNGLGETTEXPARAMETERIUIVPROC, glGetTexParameterIuiv);
     GLPROCLOAD(PFNGLACTIVETEXTUREPROC, glActiveTexture);
+
+    GLPROCLOAD(PFNGLGENFRAMEBUFFERSPROC, glGenFramebuffers);
+    GLPROCLOAD(PFNGLBINDFRAMEBUFFERPROC, glBindFramebuffer);
     
     FreeLibrary(opengl32Module);
     opengl32Module = NULL;
