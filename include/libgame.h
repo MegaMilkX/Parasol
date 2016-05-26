@@ -13,10 +13,6 @@
 #include "../src/gfxfont.h"
 #include "../src/gfxtext.h"
 
-#include "../src/scene.h"
-#include "../src/camera.h"
-#include "../src/renderable.h"
-
 #include "../src/transform.h"
 
 #endif
