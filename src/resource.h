@@ -9,40 +9,39 @@
 
 #include "datahandle.h"
 
-#include "resourcereader.h"
-
 template<typename T>
 class Resource
 {
 public:
     static void AddSearchPath(std::string path);
+    static void SetFallbackData(T data);
     static ResHdl<T> Create(T data, std::string name);
     static ResHdl<T> Get(std::string name);
     
-    static void AddReader(ResourceReader reader){ readers.push_back(reader); }
-    static int ReaderCount(){ return readers.size(); }
-    static ResourceReader Reader(int id){ return readers[id]; }
 private:
     static bool ResourceExists(std::string name){ return resources.find(name) != resources.end(); }
     static bool ReadFile(std::string name, T& data);
     
     static std::map<std::string, ResHdl<T>> resources;
     static std::vector<std::string> search_paths;
-    static std::vector<ResourceReader> readers;
 };
 
 template<typename T>
 std::map<std::string, ResHdl<T>> Resource<T>::resources;
 template<typename T>
 std::vector<std::string> Resource<T>::search_paths;
-template<typename T>
-std::vector<ResourceReader> Resource<T>::readers;
 
 template<typename T>
 void Resource<T>::AddSearchPath(std::string path)
 {
     CreateDirectoryA(path.c_str(), NULL);
     search_paths.push_back(path);
+}
+
+template<typename T>
+void Resource<T>::SetFallbackData(T data)
+{
+    ResHdl<T>::SetFallbackData(data);
 }
 
 template<typename T>
@@ -63,6 +62,10 @@ ResHdl<T> Resource<T>::Create(T data, std::string name)
 template<typename T>
 ResHdl<T> Resource<T>::Get(std::string name)
 {
+    /*
+    if (ResHdl<T>::Total() == 0)
+        ResHdl<T>::Create(T());
+        */
     if(ResourceExists(name))
     {
         return resources[name];
@@ -75,7 +78,6 @@ ResHdl<T> Resource<T>::Get(std::string name)
             std::cout << "Load failed\n";
             return ResHdl<T>();
         }
-        //
         ResHdl<T> res = ResHdl<T>::Create(data);
         resources.insert(std::make_pair(name, res));
         return res;

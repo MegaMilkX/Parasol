@@ -14,6 +14,7 @@ public:
 
     static ResHdl<DATA> Create();
     static ResHdl<DATA> Create(DATA value);
+    static void SetFallbackData(DATA value);
 private:
     ResHdl(unsigned int index) : index(index), magic(++ResHdl<DATA>::magic_next){}
     union
@@ -31,6 +32,7 @@ private:
     static std::vector<unsigned int> magic_storage;
     static std::vector<unsigned int> free_storage;
     static unsigned int magic_next;
+    static DATA default_data;
 };
 
 template<typename DATA>
@@ -41,12 +43,16 @@ template<typename DATA>
 std::vector<unsigned int> ResHdl<DATA>::free_storage;
 template<typename DATA>
 unsigned int ResHdl<DATA>::magic_next = 0;
+template<typename DATA>
+DATA ResHdl<DATA>::default_data;
 
 template<typename DATA>
 DATA* ResHdl<DATA>::operator->()
 {
+    if(index >= data_storage.size())
+        return &default_data;
     if (magic_storage[index] != magic)
-        return 0;
+        return &default_data;
     return &(data_storage[index]);
 }
 
@@ -59,6 +65,7 @@ void ResHdl<DATA>::Release()
         return;
     ResHdl<DATA>::magic_storage[index] = 0;
     ResHdl<DATA>::free_storage.push_back(index);
+    //ResHdl<DATA>::data_storage[index].Destroy();
     ResHdl<DATA>::data_storage[index] = DATA();
 }
 
@@ -107,6 +114,12 @@ ResHdl<DATA> ResHdl<DATA>::Create(DATA value)
     }
 
     return resource;
+}
+
+template<typename DATA>
+void ResHdl<DATA>::SetFallbackData(DATA value)
+{
+    default_data = value;
 }
 
 #endif
