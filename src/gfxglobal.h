@@ -12,6 +12,7 @@
 class IGFXGlobal
 {
 public:
+    IGFXGlobal() : data_index(0) {}
     virtual ~IGFXGlobal() {};
     virtual void Uniform(unsigned int location) = 0;
     unsigned int DataIndex() { return data_index; }
@@ -23,6 +24,7 @@ template<typename TYPE>
 class GFXGlobal : public IGFXGlobal
 {
 public:
+    GFXGlobal() {}
     GFXGlobal(unsigned int idx) 
     {
         data_index = idx;
