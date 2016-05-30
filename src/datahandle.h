@@ -14,7 +14,9 @@ public:
 
     static ResHdl<DATA> Create();
     static ResHdl<DATA> Create(DATA value);
+    static void Replace(ResHdl<DATA> handle, const DATA& value);
     static void SetFallbackData(DATA value);
+    static DATA& FallbackData();
 private:
     ResHdl(unsigned int index) : index(index), magic(++ResHdl<DATA>::magic_next){}
     union
@@ -117,9 +119,21 @@ ResHdl<DATA> ResHdl<DATA>::Create(DATA value)
 }
 
 template<typename DATA>
+void ResHdl<DATA>::Replace(ResHdl<DATA> handle, const DATA& value)
+{
+    data_storage[handle.index] = value;
+}
+
+template<typename DATA>
 void ResHdl<DATA>::SetFallbackData(DATA value)
 {
     default_data = value;
+}
+
+template<typename DATA>
+DATA& ResHdl<DATA>::FallbackData()
+{
+    return default_data;
 }
 
 #endif
