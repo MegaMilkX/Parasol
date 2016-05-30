@@ -18,7 +18,7 @@ bool GFXMaterial::ReadMAT(File file)
     
     if (!json.is_object())
         return false;
-
+    
     nlohmann::json::iterator it = json.begin();
     for (it; it != json.end(); ++it)
     {

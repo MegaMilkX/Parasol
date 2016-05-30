@@ -19,6 +19,7 @@ void        GFXSwapBuffers();
 
 int         GFXVersion();
 
-
+HGLRC       GFXContextHandle();
+void        GFXSetThreadingContext(bool make_current);
 
 #endif

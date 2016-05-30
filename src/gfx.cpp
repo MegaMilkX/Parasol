@@ -5,6 +5,7 @@
 WNDPROC GFXOldWndProc;
 HDC deviceContext;
 HGLRC context;
+HGLRC threadingContext;
 int contextVersion = 0;
 GFXTarget* rootRenderTarget;
 
@@ -55,6 +56,10 @@ GFXTarget* GFXInit(HWND hWnd)
     if(!wglCreateContextAttribsARB)
     {
         context = renderingContext;
+        threadingContext = wglCreateContext(deviceContext);
+        wglMakeCurrent(NULL, NULL);
+        wglShareLists(threadingContext, context);
+        wglMakeCurrent(deviceContext, context);
     }
     else
     {
@@ -71,10 +76,15 @@ GFXTarget* GFXInit(HWND hWnd)
         if(!renderingContext3plus)
         {
             context = renderingContext;
+            threadingContext = wglCreateContext(deviceContext);
+            wglMakeCurrent(NULL, NULL);
+            wglShareLists(threadingContext, context);
+            wglMakeCurrent(deviceContext, context);
         }
         else
         {
             context = renderingContext3plus;
+            threadingContext = wglCreateContextAttribsARB(deviceContext, context, attr);
             wglMakeCurrent(NULL,NULL);
             wglDeleteContext(renderingContext);
             wglMakeCurrent(deviceContext, context);
@@ -88,7 +98,7 @@ GFXTarget* GFXInit(HWND hWnd)
     glGetIntegerv(GL_MINOR_VERSION, &version[1]);
     contextVersion = version[0] * 100 + version[1] * 10;
     rootRenderTarget = GFXTarget::Create(); //Default OpenGL framebuffer is 0 and we can't change it
-                                                //We don't actually need HWND for this, whatever
+                                                //Don't actually need HWND for this, whatever
     
     std::cout << "OpenGL v" << GFXVersion() << " ready.\n";
     
@@ -131,4 +141,14 @@ void GFXSwapBuffers()
 int GFXVersion()
 {
     return contextVersion;
+}
+
+HGLRC GFXContextHandle()
+{
+    return context;
+}
+
+void GFXSetThreadingContext(bool make_current)
+{
+    wglMakeCurrent(deviceContext, threadingContext);
 }

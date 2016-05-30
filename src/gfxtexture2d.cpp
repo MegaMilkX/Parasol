@@ -59,6 +59,8 @@ bool GFXTexture2D::ReadPNG(File file)
     glGenerateMipmap(GL_TEXTURE_2D);
     
     SOIL_free_image_data( img );
+
+    glFinish();
     
     return true;
 }

@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "datahandle.h"
+#include "resourceasync.h"
 
 template<typename T>
 class Resource
@@ -18,9 +19,9 @@ public:
     static ResHdl<T> Create(T data, std::string name);
     static ResHdl<T> Get(std::string name);
     
+    static bool ReadFile(std::string name, T& data);
 private:
     static bool ResourceExists(std::string name){ return resources.find(name) != resources.end(); }
-    static bool ReadFile(std::string name, T& data);
     
     static std::map<std::string, ResHdl<T>> resources;
     static std::vector<std::string> search_paths;
@@ -62,25 +63,31 @@ ResHdl<T> Resource<T>::Create(T data, std::string name)
 template<typename T>
 ResHdl<T> Resource<T>::Get(std::string name)
 {
-    /*
-    if (ResHdl<T>::Total() == 0)
-        ResHdl<T>::Create(T());
-        */
     if(ResourceExists(name))
     {
         return resources[name];
     }
     else
     {
-        T data = T::Create();
-        if (!ReadFile(name, data))
+        if (ResourceAsync::IsInitialized())
         {
-            std::cout << "Load failed\n";
-            return ResHdl<T>();
+            ResHdl<T> hdl = ResHdl<T>::Create(ResHdl<T>::FallbackData());
+            ResourceAsync::Post(ReadResourceTask<T>(hdl, name));
+            resources.insert(std::make_pair(name, hdl));
+            return hdl;
         }
-        ResHdl<T> res = ResHdl<T>::Create(data);
-        resources.insert(std::make_pair(name, res));
-        return res;
+        else
+        {
+            T data = T::Create();
+            if (!ReadFile(name, data))
+            {
+                std::cout << "Load failed\n";
+                return ResHdl<T>();
+            }
+            ResHdl<T> res = ResHdl<T>::Create(data);
+            resources.insert(std::make_pair(name, res));
+            return res;
+        }
     }
 }
 
@@ -128,7 +135,7 @@ bool Resource<T>::ReadFile(std::string name, T& data)
         return false;
         
     File file = File::Open(final_path, File::READ);
-        
+    
     if(!data.Read(reader_id, file))
         return false;
         
