@@ -48,10 +48,22 @@ bool GFXTexture2D::ReadPNG(File file)
         format = GL_RGBA;
         break;
     }
+
+    unsigned char* img_flipped = new unsigned char[width * height * 4];
+    for (int i = 0, k = width * height - width; i < width * height; i += width, k -= width)
+    {
+        for (int j = 0; j < width; ++j)
+        {
+            img_flipped[(i + j) * 4] = img[(k + j) * 4];
+            img_flipped[(i + j) * 4 + 1] = img[(k + j) * 4 + 1];
+            img_flipped[(i + j) * 4 + 2] = img[(k + j) * 4 + 2];
+            img_flipped[(i + j) * 4 + 3] = img[(k + j) * 4 + 3];
+        }
+    }
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, buffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_flipped);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -59,7 +71,7 @@ bool GFXTexture2D::ReadPNG(File file)
     glGenerateMipmap(GL_TEXTURE_2D);
     
     SOIL_free_image_data( img );
-
+    delete[] img_flipped;
     glFinish();
     
     return true;
