@@ -17,7 +17,7 @@ void        GFXSetWindowResizeCallback(GFXOnWindowResize callback);
 
 void        GFXSwapBuffers();
 
-int         GFXVersion();
+int         GFXAPIVersion();
 
 HGLRC       GFXContextHandle();
 void        GFXSetThreadingContext(bool make_current);

@@ -100,7 +100,7 @@ GFXTarget* GFXInit(HWND hWnd)
     rootRenderTarget = GFXTarget::Create(); //Default OpenGL framebuffer is 0 and we can't change it
                                                 //Don't actually need HWND for this, whatever
     
-    std::cout << "OpenGL v" << GFXVersion() << " ready.\n";
+    std::cout << "OpenGL v" << GFXAPIVersion() << " ready.\n";
     
     std::cout << "GLSL v" << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
     
@@ -138,7 +138,7 @@ void GFXSwapBuffers()
     SwapBuffers(deviceContext);
 };
 
-int GFXVersion()
+int GFXAPIVersion()
 {
     return contextVersion;
 }

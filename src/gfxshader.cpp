@@ -4,6 +4,22 @@
 
 #include <iostream>
 
+#include "gfx.h"
+
+std::map<int, int> glsl_version =
+{ { 200, 110 },
+{ 210, 120 },
+{ 300, 130 },
+{ 310, 140 },
+{ 320, 150 },
+{ 330, 330 },
+{ 400, 400 },
+{ 410, 410 },
+{ 420, 420 },
+{ 430, 430 },
+{ 440, 440 },
+{ 450, 450 } };
+
 bool GFXShader::ReadXML(File file)
 {
     tinyxml2::XMLDocument doc;
@@ -158,7 +174,10 @@ unsigned int GFXShader::CompileStage(GFXS::Stage& stage, unsigned int type)
 {
     std::string source = stage.Evaluate();
     // TODO: Add shader model deduction on runtime
-    source = "#version 450\n" + source;
+    int ver = 450;
+    if (glsl_version.find(GFXAPIVersion()) != glsl_version.end())
+        ver = glsl_version[GFXAPIVersion()];
+    source = "#version " + std::to_string(ver) + "\n" + source;
     
     unsigned int shader = glCreateShader(type);
     const char* c_str = source.c_str();
