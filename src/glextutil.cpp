@@ -2,6 +2,7 @@
 
 //WGL
 PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
+PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 
 //GL extension function pointers
 PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
@@ -100,6 +101,7 @@ void WGLEXTLoadFunctions()
     }
     
     GLPROCLOAD(PFNWGLCREATECONTEXTATTRIBSARBPROC, wglCreateContextAttribsARB);
+    GLPROCLOAD(PFNWGLSWAPINTERVALEXTPROC, wglSwapIntervalEXT);
     
     FreeLibrary(opengl32Module);
     opengl32Module = NULL;

@@ -19,6 +19,7 @@
 void* GLEXTLoadFunction(const char* name);
 
 extern PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
+extern PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 
 extern PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
 extern PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
