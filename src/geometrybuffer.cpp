@@ -17,3 +17,8 @@ bool GeometryBuffer::Data(void* data, size_t sz)
     glBufferData(target, sz, data, usage);
     return true;
 }
+
+void GeometryBuffer::Bind()
+{
+    glBindBuffer(target, buffer);
+}

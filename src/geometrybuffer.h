@@ -7,6 +7,7 @@ public:
     GeometryBuffer(){}
     static GeometryBuffer Create(unsigned int target, unsigned int usage_hint);
     bool Data(void* data, size_t sz);
+    void Bind();
 private:
     
     unsigned int buffer;
