@@ -72,7 +72,8 @@ ResHdl<T> Resource<T>::Get(std::string name)
         if (ResourceAsync::IsInitialized())
         {
             ResHdl<T> hdl = ResHdl<T>::Create(ResHdl<T>::FallbackData());
-            ResourceAsync::Post(ReadResourceTask<T>(hdl, name));
+            T data = T::Create();
+            ResourceAsync::Post(ReadResourceTask<T>(hdl, name, data));
             resources.insert(std::make_pair(name, hdl));
             return hdl;
         }
