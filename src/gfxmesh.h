@@ -88,9 +88,6 @@ void GFXMesh::SetVertices(std::vector<T> vertices)
     if(vertices.size() == 0)
         return;
     
-    Bind();
-    
-    vertex_buffer = GeometryBuffer::Create(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
     vertex_buffer.Data(vertices.data(), sizeof(T) * vertices.size());
     size_t offset = 0;
     for(int i = T::attribCount() - 1; i >= 0; --i)
