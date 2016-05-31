@@ -20,7 +20,7 @@ template<typename T>
 class ReadResourceTask : public ResourceTask
 {
 public:
-    ReadResourceTask(ResHdl<T> handle, std::string resource_name, T data)
+    ReadResourceTask(ResHdl<T> handle, std::string resource_name)
         : handle(handle), resource_name(resource_name)
     {
 
@@ -30,6 +30,7 @@ public:
     {
         if (ResourceAsync::IsInitialized())
             GFXSetThreadingContext(true);
+        T data = T::Create();
         if (Resource<T>::ReadFile(resource_name, data))
         {
             ResHdl<T>::Replace(handle, data);
@@ -40,7 +41,6 @@ public:
 protected:
     ResHdl<T> handle;
     std::string resource_name;
-    T data;
 };
 
 class ResourceAsync

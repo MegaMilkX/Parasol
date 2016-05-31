@@ -52,6 +52,7 @@ GFXTarget* GFXInit(HWND hWnd)
     HGLRC renderingContext = wglCreateContext(deviceContext);
     wglMakeCurrent(deviceContext, renderingContext);
     
+    bool core_profile = false;
     WGLEXTLoadFunctions();
     if(!wglCreateContextAttribsARB)
     {
@@ -88,11 +89,20 @@ GFXTarget* GFXInit(HWND hWnd)
             wglMakeCurrent(NULL,NULL);
             wglDeleteContext(renderingContext);
             wglMakeCurrent(deviceContext, context);
+            core_profile = true;
         }
     }
     
     GLEXTLoadFunctions();
-    
+
+    if (core_profile)
+    {
+        //For newer context at least one vao is required
+        GLuint vao;
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
+    }
+
     int version[2];
     glGetIntegerv(GL_MAJOR_VERSION, &version[0]);
     glGetIntegerv(GL_MINOR_VERSION, &version[1]);

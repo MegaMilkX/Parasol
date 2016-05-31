@@ -64,7 +64,21 @@ public:
     void SetIndices(std::vector<unsigned short> indices);
     void Bind()
     {
-        glBindVertexArray(vao);
+        vertex_buffer.Bind();
+        index_buffer.Bind();
+        size_t offset = 0;
+        for (unsigned int i = 0; i < attribs.size(); ++i)
+        {
+            AttrInfo attrInfo = attribs[i];
+            glVertexAttribPointer(attrInfo.index,                       //*attrib index
+                                  attrInfo.elemCount,                   //*attrib element count
+                                  type_to_gltype[attrInfo.elemType],    //*element type
+                                  GL_FALSE,                             //*normalize?
+                                  vertex_size,                          //*stride
+                                  (void*)offset);                       //*offset
+            offset += attrInfo.size;
+            glEnableVertexAttribArray(attrInfo.index);
+        }
     }
     void Render()
     {
@@ -77,7 +91,10 @@ private:
     GLuint vao;
     GeometryBuffer vertex_buffer;
     GeometryBuffer index_buffer;
-    
+
+    std::vector<AttrInfo> attribs;
+    size_t vertex_size;
+
     int index_count;
     unsigned int index_type;
 };
@@ -88,19 +105,13 @@ void GFXMesh::SetVertices(std::vector<T> vertices)
     if(vertices.size() == 0)
         return;
     
+    vertex_size = sizeof(T);
+    vertex_buffer = GeometryBuffer::Create(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
     vertex_buffer.Data(vertices.data(), sizeof(T) * vertices.size());
     size_t offset = 0;
     for(int i = T::attribCount() - 1; i >= 0; --i)
     {
-        AttrInfo attrInfo = T::getAttrInfo(i);
-        glVertexAttribPointer(attrInfo.index,                     /*attrib index*/
-                              attrInfo.elemCount,                 /*attrib element count*/
-                              type_to_gltype[attrInfo.elemType],  /*element type*/
-                              GL_FALSE,                           /*normalize?*/
-                              sizeof(T),                          /*stride*/
-                              (void*)offset);                     /*offset*/
-        offset += attrInfo.size;
-        glEnableVertexAttribArray(attrInfo.index);
+        attribs.push_back(T::getAttrInfo(i));
     }
 }
 
