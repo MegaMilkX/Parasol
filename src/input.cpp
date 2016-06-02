@@ -1,5 +1,7 @@
 #include "input.h"
 
+int InputMouse::x, InputMouse::y;
+
 #define RID_COUNT 2
 #define RID_MOUSE 0x02
 #define RID_KEYBOARD 0x06
@@ -14,6 +16,9 @@ LRESULT CALLBACK InputWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch(msg)
     {
+    case WM_MOUSEMOVE:
+        InputMouse::_upd(LOWORD(lParam), HIWORD(lParam));
+        break;
     case WM_INPUT:
         
         break;
