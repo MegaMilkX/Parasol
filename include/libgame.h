@@ -10,8 +10,12 @@
 #include "../src/gfxmesh.h"
 #include "../src/gfxtexture2d.h"
 
+#include "../src/gfx-line.h"
+
 #include "../src/gfxfont.h"
 #include "../src/gfxtext.h"
+
+#include "../src/input.h"
 
 #include "../src/transform.h"
 
