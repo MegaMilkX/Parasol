@@ -25,12 +25,16 @@ private:
     
     static std::map<std::string, ResHdl<T>> resources;
     static std::vector<std::string> search_paths;
+
+    static std::recursive_mutex sync;
 };
 
 template<typename T>
 std::map<std::string, ResHdl<T>> Resource<T>::resources;
 template<typename T>
 std::vector<std::string> Resource<T>::search_paths;
+template<typename T>
+std::recursive_mutex Resource<T>::sync;
 
 template<typename T>
 void Resource<T>::AddSearchPath(std::string path)
@@ -63,6 +67,7 @@ ResHdl<T> Resource<T>::Create(T data, std::string name)
 template<typename T>
 ResHdl<T> Resource<T>::Get(std::string name)
 {
+    std::lock_guard<std::recursive_mutex> lock(sync);
     if(ResourceExists(name))
     {
         return resources[name];
