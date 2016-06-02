@@ -48,8 +48,7 @@ class ResourceAsync
 public:
     static bool Init(Window& win)
     {
-        DWORD thread_index;
-        thread_handle = CreateThread(0, 0, ResourceAsync::ThreadProc, 0, CREATE_SUSPENDED, &thread_index);
+        thread_handle = CreateThread(0, 0, ResourceAsync::ThreadProc, 0, 0, &thread_index);
         initialized = true;
         return true;
     }
@@ -61,12 +60,25 @@ public:
     {
         return initialized;
     }
+    static bool IsAlive()
+    {
+        DWORD result = WaitForSingleObject(thread_handle, 0);
+        if (result == WAIT_OBJECT_0)
+            return false;
+        else
+            return true;
+    }
+    static void PrintDebugInfo()
+    {
+        std::cout << "ResourceAsync thread status: " << IsAlive() << std::endl;
+        std::cout << "Queue len: " << task_queue.size() << std::endl;
+    }
     template<typename T>
     static void Post(ReadResourceTask<T> task)
     {
         std::lock_guard<std::recursive_mutex> lock(sync_queue);
         task_queue.push(new ReadResourceTask<T>(task));
-        ResumeThread(thread_handle);
+        //ResumeThread(thread_handle);
     }
 private:
     static HDC deviceContext;
@@ -74,22 +86,26 @@ private:
     static bool initialized;
     static std::queue<ResourceTask*> task_queue;
     static std::recursive_mutex sync_queue;
+    static DWORD thread_index;
     static HANDLE thread_handle;
 
     static DWORD WINAPI ThreadProc(LPVOID lpParameter)
     {
         while (true)
         {
+            if (task_queue.size() == 0)
+                continue;
+
             {
                 std::lock_guard<std::recursive_mutex> lock(sync_queue);
-
-                task_queue.front()->Execute();
-                delete task_queue.front();
+                
+                ResourceTask* task = task_queue.front();
                 task_queue.pop();
+                task->Execute();
+                delete task;
             }
 
-            if (task_queue.size() == 0)
-                SuspendThread(thread_handle);
+            
         }
         return 0;
     }
