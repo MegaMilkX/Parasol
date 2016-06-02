@@ -30,4 +30,6 @@ namespace VertexAttrib
 
 }
 
+extern std::map<int, int> type_to_gltype;
+
 #endif
