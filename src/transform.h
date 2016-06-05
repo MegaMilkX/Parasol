@@ -3,25 +3,22 @@
 
 #include "math3f.h"
 
-enum Space
-{
-    LOCAL,
-    PARENT,
-    WORLD
-};
-
 class Transform
 {
 public:
     Transform();
 
-    void Translate(float x, float y, float z, Space space = LOCAL);
-    void Translate(vec3f trans, Space space = LOCAL);
-    void Rotate(float angle, float x, float y, float z, Space space = LOCAL);
-    void Rotate(float angle, vec3f axis, Space space = LOCAL);
+    void Translate(float x, float y, float z);
+    void Translate(vec3f trans);
+    void Rotate(float angle, float x, float y, float z);
+    void Rotate(float angle, vec3f axis);
     void Scale(float x, float y, float z);
     void Scale(vec3f scale);
     void Scale(float scale);
+
+    vec3f Position() { return position; }
+    quat Rotation() { return rotation; }
+    vec3f Scale() { return scale; }
 
     mat4f GetTransform();
 private:

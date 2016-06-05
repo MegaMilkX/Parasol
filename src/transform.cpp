@@ -9,13 +9,15 @@ scale(1.0f, 1.0f, 1.0f)
 
 }
 
-void Transform::Translate(float x, float y, float z, Space space)
+void Transform::Translate(float x, float y, float z)
 {
-    Translate(vec3f(x, y, z), space);
+    Translate(vec3f(x, y, z));
 }
 
-void Transform::Translate(vec3f trans, Space space)
+void Transform::Translate(vec3f trans)
 {
+    position = position + trans;
+    /*
     if (space == LOCAL)
     {
         trans = toMat3(rotation) * trans;
@@ -23,25 +25,27 @@ void Transform::Translate(vec3f trans, Space space)
     }
     else if (space == PARENT)
     {
-        position = position + trans;
+        
     }
     else if (space == WORLD)
     {
 
-    }
+    }*/
 }
 
-void Transform::Rotate(float angle, float x, float y, float z, Space space)
+void Transform::Rotate(float angle, float x, float y, float z)
 {
-    Rotate(angle, vec3f(x, y, z), space);
+    Rotate(angle, vec3f(x, y, z));
 }
 
-void Transform::Rotate(float angle, vec3f axis, Space space)
+void Transform::Rotate(float angle, vec3f axis)
 {
+    quat q = angleAxis(angle, axis);
+    rotation = q * rotation;
+    /*
     if (space == LOCAL)
     {
-        quat q = angleAxis(angle, axis);
-        rotation = q * rotation;
+        
     }
     else if (space == PARENT)
     {
@@ -51,7 +55,7 @@ void Transform::Rotate(float angle, vec3f axis, Space space)
     {
         quat q = angleAxis(angle, axis);
         rotation = rotation * q;
-    }
+    }*/
     
     rotation = ::normalize(rotation);
 }
