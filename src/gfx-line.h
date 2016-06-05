@@ -11,6 +11,7 @@ class GFXLine
 public:
     GFXLine();
     void Render(std::vector<vec3f>& points);
+    void Render(const ray& r);
 private:
     GFXShader shader;
     GeometryBuffer vertex_buffer;

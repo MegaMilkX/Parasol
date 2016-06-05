@@ -37,3 +37,11 @@ void GFXLine::Render(std::vector<vec3f>& points)
     
     glDrawArrays(GL_LINES, 0, points.size());
 }
+
+void GFXLine::Render(const ray& r)
+{
+    std::vector<vec3f> pts;
+    pts.push_back(r.origin);
+    pts.push_back(r.origin + r.direction);
+    Render(pts);
+}
