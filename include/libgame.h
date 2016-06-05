@@ -19,4 +19,6 @@
 
 #include "../src/transform.h"
 
+#include "../src/action.h"
+
 #endif
