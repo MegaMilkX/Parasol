@@ -307,14 +307,20 @@ inline vec3f operator*(const mat3f &m, const vec3f &v)
 //
 inline mat3f transpose(const mat3f &m)
 {
-    //TODO
-    return mat3f();
+    mat3f result;
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+                result[i][j] = m[j][i];
+    return result;
 }
 
 inline mat4f transpose(const mat4f &m)
 {
-    //TODO
-    return mat4f();
+    mat4f result;
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            result[i][j] = m[j][i];
+    return result;
 }
 
 inline mat4f scale(const mat4f &m, const vec3f &v)
@@ -333,117 +339,268 @@ inline mat4f translate(const mat4f &m, const vec3f &v)
     return r;
 }
 
+inline mat4f inverse(const mat4f &mat)
+{
+    float inv[16], det;
+    int i;
+
+    float* m = (float*)(&mat);
+
+    inv[0] = m[5] * m[10] * m[15] -
+        m[5] * m[11] * m[14] -
+        m[9] * m[6] * m[15] +
+        m[9] * m[7] * m[14] +
+        m[13] * m[6] * m[11] -
+        m[13] * m[7] * m[10];
+
+    inv[4] = -m[4] * m[10] * m[15] +
+        m[4] * m[11] * m[14] +
+        m[8] * m[6] * m[15] -
+        m[8] * m[7] * m[14] -
+        m[12] * m[6] * m[11] +
+        m[12] * m[7] * m[10];
+
+    inv[8] = m[4] * m[9] * m[15] -
+        m[4] * m[11] * m[13] -
+        m[8] * m[5] * m[15] +
+        m[8] * m[7] * m[13] +
+        m[12] * m[5] * m[11] -
+        m[12] * m[7] * m[9];
+
+    inv[12] = -m[4] * m[9] * m[14] +
+        m[4] * m[10] * m[13] +
+        m[8] * m[5] * m[14] -
+        m[8] * m[6] * m[13] -
+        m[12] * m[5] * m[10] +
+        m[12] * m[6] * m[9];
+
+    inv[1] = -m[1] * m[10] * m[15] +
+        m[1] * m[11] * m[14] +
+        m[9] * m[2] * m[15] -
+        m[9] * m[3] * m[14] -
+        m[13] * m[2] * m[11] +
+        m[13] * m[3] * m[10];
+
+    inv[5] = m[0] * m[10] * m[15] -
+        m[0] * m[11] * m[14] -
+        m[8] * m[2] * m[15] +
+        m[8] * m[3] * m[14] +
+        m[12] * m[2] * m[11] -
+        m[12] * m[3] * m[10];
+
+    inv[9] = -m[0] * m[9] * m[15] +
+        m[0] * m[11] * m[13] +
+        m[8] * m[1] * m[15] -
+        m[8] * m[3] * m[13] -
+        m[12] * m[1] * m[11] +
+        m[12] * m[3] * m[9];
+
+    inv[13] = m[0] * m[9] * m[14] -
+        m[0] * m[10] * m[13] -
+        m[8] * m[1] * m[14] +
+        m[8] * m[2] * m[13] +
+        m[12] * m[1] * m[10] -
+        m[12] * m[2] * m[9];
+
+    inv[2] = m[1] * m[6] * m[15] -
+        m[1] * m[7] * m[14] -
+        m[5] * m[2] * m[15] +
+        m[5] * m[3] * m[14] +
+        m[13] * m[2] * m[7] -
+        m[13] * m[3] * m[6];
+
+    inv[6] = -m[0] * m[6] * m[15] +
+        m[0] * m[7] * m[14] +
+        m[4] * m[2] * m[15] -
+        m[4] * m[3] * m[14] -
+        m[12] * m[2] * m[7] +
+        m[12] * m[3] * m[6];
+
+    inv[10] = m[0] * m[5] * m[15] -
+        m[0] * m[7] * m[13] -
+        m[4] * m[1] * m[15] +
+        m[4] * m[3] * m[13] +
+        m[12] * m[1] * m[7] -
+        m[12] * m[3] * m[5];
+
+    inv[14] = -m[0] * m[5] * m[14] +
+        m[0] * m[6] * m[13] +
+        m[4] * m[1] * m[14] -
+        m[4] * m[2] * m[13] -
+        m[12] * m[1] * m[6] +
+        m[12] * m[2] * m[5];
+
+    inv[3] = -m[1] * m[6] * m[11] +
+        m[1] * m[7] * m[10] +
+        m[5] * m[2] * m[11] -
+        m[5] * m[3] * m[10] -
+        m[9] * m[2] * m[7] +
+        m[9] * m[3] * m[6];
+
+    inv[7] = m[0] * m[6] * m[11] -
+        m[0] * m[7] * m[10] -
+        m[4] * m[2] * m[11] +
+        m[4] * m[3] * m[10] +
+        m[8] * m[2] * m[7] -
+        m[8] * m[3] * m[6];
+
+    inv[11] = -m[0] * m[5] * m[11] +
+        m[0] * m[7] * m[9] +
+        m[4] * m[1] * m[11] -
+        m[4] * m[3] * m[9] -
+        m[8] * m[1] * m[7] +
+        m[8] * m[3] * m[5];
+
+    inv[15] = m[0] * m[5] * m[10] -
+        m[0] * m[6] * m[9] -
+        m[4] * m[1] * m[10] +
+        m[4] * m[2] * m[9] +
+        m[8] * m[1] * m[6] -
+        m[8] * m[2] * m[5];
+
+    det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
+
+    if (det == 0)
+        return mat;
+
+    det = 1.0 / det;
+
+    mat4f out;
+    float* outptr = (float*)(&out);
+    for (i = 0; i < 16; i++)
+        outptr[i] = inv[i] * det;
+
+    return out;
+}
+
+/*
 inline mat4f inverse(const mat4f &m)
 {
     float det;
     mat4f inv;
 
-    inv[0][0] = m[1][1] * m[2][2] * m[3][3] -
+    inv[0][0] = 
+        m[1][1] * m[2][2] * m[3][3] -
         m[1][1] * m[2][3] * m[3][2] -
         m[2][1] * m[1][2] * m[3][3] +
         m[2][1] * m[1][3] * m[3][2] +
         m[3][1] * m[1][2] * m[2][3] -
         m[3][1] * m[1][3] * m[2][2];
 
-    inv[1][0] = -m[1][0] * m[2][2] * m[3][3] +
+    inv[1][0] = 
+        -m[1][0] * m[2][2] * m[3][3] +
         m[1][0] * m[2][3] * m[3][2] +
         m[2][0] * m[1][2] * m[3][3] -
         m[2][0] * m[1][3] * m[3][2] -
         m[3][0] * m[1][2] * m[2][3] +
         m[3][0] * m[1][3] * m[2][2];
 
-    inv[2][0] = m[1][0] * m[2][1] * m[3][3] -
+    inv[2][0] = 
+        m[1][0] * m[2][1] * m[3][3] -
         m[1][0] * m[2][3] * m[3][1] -
         m[2][0] * m[1][1] * m[3][3] +
         m[2][0] * m[1][3] * m[3][1] +
         m[3][0] * m[1][1] * m[2][3] -
         m[3][0] * m[1][3] * m[2][1];
 
-    inv[3][0] = -m[1][0] * m[2][1] * m[3][2] +
+    inv[3][0] = 
+        -m[1][0] * m[2][1] * m[3][2] +
         m[1][0] * m[2][2] * m[3][1] +
         m[2][0] * m[1][1] * m[3][2] -
         m[2][0] * m[1][2] * m[3][1] -
         m[3][0] * m[1][1] * m[2][2] +
         m[3][0] * m[1][2] * m[2][1];
 
-    inv[0][1] = -m[0][1] * m[2][2] * m[3][3] +
+    inv[0][1] = 
+        -m[0][1] * m[2][2] * m[3][3] +
         m[0][1] * m[2][3] * m[3][2] +
         m[2][1] * m[0][2] * m[3][3] -
         m[2][1] * m[0][3] * m[3][2] -
         m[3][1] * m[0][2] * m[2][3] +
         m[3][1] * m[0][3] * m[2][2];
 
-    inv[1][1] = m[0][0] * m[2][2] * m[3][3] -
+    inv[1][1] = 
+        m[0][0] * m[2][2] * m[3][3] -
         m[0][0] * m[2][3] * m[3][2] -
         m[2][0] * m[0][2] * m[3][3] +
         m[2][0] * m[0][3] * m[3][2] +
         m[3][0] * m[0][2] * m[2][3] -
         m[3][0] * m[0][3] * m[2][2];
 
-    inv[2][1] = -m[0][0] * m[2][1] * m[3][3] +
+    inv[2][1] = 
+        -m[0][0] * m[2][1] * m[3][3] +
         m[0][0] * m[2][3] * m[3][1] +
         m[2][0] * m[0][1] * m[3][3] -
         m[2][0] * m[0][3] * m[3][1] -
         m[3][0] * m[0][1] * m[2][3] +
         m[3][0] * m[0][3] * m[2][1];
 
-    inv[3][1] = m[0][0] * m[2][1] * m[3][2] -
+    inv[3][1] = 
+        m[0][0] * m[2][1] * m[3][2] -
         m[0][0] * m[2][2] * m[3][1] -
         m[2][0] * m[0][1] * m[3][2] +
         m[2][0] * m[0][2] * m[3][1] +
         m[3][0] * m[0][1] * m[2][2] -
         m[3][0] * m[0][2] * m[2][1];
 
-    inv[0][2] = m[0][1] * m[1][2] * m[3][3] -
+    inv[0][2] = 
+        m[0][1] * m[1][2] * m[3][3] -
         m[0][1] * m[1][3] * m[3][2] -
         m[1][1] * m[0][2] * m[3][3] +
         m[1][1] * m[0][3] * m[3][2] +
         m[3][1] * m[0][2] * m[1][3] -
         m[3][1] * m[0][3] * m[1][2];
 
-    inv[1][2] = -m[0][0] * m[1][2] * m[3][3] +
+    inv[1][2] = 
+        -m[0][0] * m[1][2] * m[3][3] +
         m[0][0] * m[1][3] * m[3][2] +
         m[1][0] * m[0][2] * m[3][3] -
         m[1][0] * m[0][3] * m[3][2] -
         m[3][0] * m[0][2] * m[1][3] +
         m[3][0] * m[0][3] * m[1][2];
 
-    inv[2][2] = m[0][0] * m[1][1] * m[3][3] -
+    inv[2][2] = 
+        m[0][0] * m[1][1] * m[3][3] -
         m[0][0] * m[1][3] * m[3][1] -
         m[1][0] * m[0][1] * m[3][3] +
         m[1][0] * m[0][3] * m[3][1] +
         m[3][0] * m[0][1] * m[1][3] -
         m[3][0] * m[0][3] * m[1][1];
 
-    inv[3][2] = -m[0][0] * m[1][1] * m[3][2] +
+    inv[3][2] = 
+        -m[0][0] * m[1][1] * m[3][2] +
         m[0][0] * m[1][2] * m[3][1] +
         m[1][0] * m[0][1] * m[3][2] -
         m[1][0] * m[0][2] * m[3][1] -
         m[3][0] * m[0][1] * m[1][2] +
         m[3][0] * m[0][2] * m[1][1];
 
-    inv[0][3] = -m[0][1] * m[1][2] * m[2][3] +
+    inv[0][3] = 
+        -m[0][1] * m[1][2] * m[2][3] +
         m[0][1] * m[1][3] * m[2][2] +
         m[1][1] * m[0][2] * m[2][3] -
         m[1][1] * m[0][3] * m[2][2] -
         m[2][1] * m[0][2] * m[1][3] +
         m[2][1] * m[0][3] * m[1][2];
 
-    inv[1][3] = m[0][0] * m[1][2] * m[2][3] -
+    inv[1][3] = 
+        m[0][0] * m[1][2] * m[2][3] -
         m[0][0] * m[1][3] * m[2][2] -
         m[1][0] * m[0][2] * m[2][3] +
         m[1][0] * m[0][3] * m[2][2] +
         m[2][0] * m[0][2] * m[1][3] -
         m[2][0] * m[0][3] * m[1][2];
 
-    inv[2][3] = -m[0][0] * m[1][1] * m[2][3] +
+    inv[2][3] = 
+        -m[0][0] * m[1][1] * m[2][3] +
         m[0][0] * m[1][3] * m[2][1] +
         m[1][0] * m[0][1] * m[2][3] -
         m[1][0] * m[0][3] * m[2][1] -
         m[2][0] * m[0][1] * m[1][3] +
         m[2][0] * m[0][3] * m[1][1];
 
-    inv[3][3] = m[0][0] * m[1][1] * m[2][2] -
+    inv[3][3] = 
+        m[0][0] * m[1][1] * m[2][2] -
         m[0][0] * m[1][2] * m[2][1] -
         m[1][0] * m[0][1] * m[2][2] +
         m[1][0] * m[0][2] * m[2][1] +
@@ -462,7 +619,7 @@ inline mat4f inverse(const mat4f &m)
 
     return inv;
 }
-
+*/
 inline mat4f perspective(float fov, float aspect, float znear, float zfar)
 {
     assert(aspect != 0.0f);
@@ -529,6 +686,15 @@ inline mat3f toMat3(const quat &q)
     return m;
 }
 
+inline mat3f toMat3(const mat4f& m)
+{
+    mat3f mr;
+    mr[0] = m[0];
+    mr[1] = m[1];
+    mr[2] = m[2];
+    return mr;
+}
+
 inline mat4f toMat4(const quat &q)
 {
     mat4f m(1.0f);
@@ -536,9 +702,9 @@ inline mat4f toMat4(const quat &q)
     return m;
 }
 
-///////////////////////////////////////////////
-//Interpolation
-///////////////////////////////////////////////
+//==============================================
+// Interpolation
+//==============================================
 inline float clamp(float f, float a, float b)
 {
     f = f < a ? a : (f > b ? b : f);
@@ -550,5 +716,215 @@ inline float smoothstep(float a, float b, float x)
     x = clamp((x - a) / (b - a), 0.0f, 1.0f);
     return x * x * (3 - 2 * x);
 }
+
+//==============================================
+// Shapes and intersections
+//==============================================
+
+struct ray
+{
+    ray() {}
+    ray(const vec3f& orig, const vec3f& dir)
+        : origin(orig), direction(dir) {}
+    vec3f origin;
+    vec3f direction;
+};
+
+struct aabb
+{
+    aabb() {}
+    aabb(const vec3f& a, const vec3f& b)
+        : a(a), b(b) {}
+    vec3f a, b;
+};
+
+struct sphere
+{
+    sphere() {}
+    sphere(const vec3f& center, float radius)
+        : center(center), radius(radius) {}
+    vec3f center;
+    float radius;
+};
+
+inline ray operator*(const mat4f& m, const ray& r)
+{
+    ray res = r;
+    vec4f dir = vec4f(res.direction.x, res.direction.y, res.direction.z, 0.0f);
+    vec4f orig = vec4f(res.origin.x, res.origin.y, res.origin.z, 1.0f);
+    dir = inverse(m) * dir;
+    orig = inverse(m) * orig;
+
+    res.direction = dir;
+    res.origin = orig;
+    res.direction = normalize(res.direction);
+    return res;
+}
+
+inline bool intersect(const ray& r, const sphere& s, vec3f& point)
+{
+    vec3f C = s.center;
+    vec3f O = r.origin;
+    vec3f D = r.direction;
+
+    vec3f L = C - O;
+
+    float tca = dot(L, D);
+
+    if (tca < 0)
+        return false;
+
+    float d = qsqrt(L.length() * L.length() - tca * tca);
+    if (d < 0 || d > s.radius)
+        return false;
+
+    float thc = qsqrt(s.radius * s.radius - d * d);
+    float t0 = tca - thc;
+    float t1 = tca + thc;
+
+    float t = t0 > 0.0f ? t0 : t1;
+
+    if (t <= 0)
+        return false;
+
+    point = O + D * t;
+
+    return true;
+}
+
+inline bool intersect(const ray& r, const aabb& b, vec3f& point)
+{
+    float eps = 0.000001f;
+    vec3f N;
+    float d = 0.0f;
+    float t;
+    float lowest_t = 10000000.0f;
+    vec3f pt;
+    bool collision = false;
+
+    vec3f bmin = b.a;
+    vec3f bmax = b.b;
+
+    // +X intersection
+    N = vec3f(1.0f, 0.0f, 0.0f);
+    d = bmax.x;
+    t = -(dot(r.origin, N) + d) / dot(r.direction, N);
+    pt = r.origin + t * r.direction;
+
+    if (fabsf(t) > eps)
+    {
+        if (pt.y < bmax.y && pt.y > bmin.y
+            && pt.z < bmax.z && pt.z > bmin.z)
+        {
+            point = pt;
+            lowest_t = t;
+            collision = true;
+        }
+    }
+    
+    // +Y intersection
+    N = vec3f(0.0f, 1.0f, 0.0f);
+    d = bmax.y;
+    t = -(dot(r.origin, N) + d) / dot(r.direction, N);
+    pt = r.origin + t * r.direction;
+
+    if (fabsf(t) > eps)
+    {
+        if (pt.x < bmax.x && pt.x > bmin.x
+            && pt.z < bmax.z && pt.z > bmin.z)
+        {
+            if (t < lowest_t)
+            {
+                lowest_t = t;
+                point = pt;
+            }
+            collision = true;
+        }
+    }
+    
+    // +Z intersection
+    N = vec3f(0.0f, 0.0f, 1.0f);
+    d = bmax.z;
+    t = -(dot(r.origin, N) + d) / dot(r.direction, N);
+    pt = r.origin + t * r.direction;
+
+    if (fabsf(t) > eps)
+    {
+        if (pt.x < bmax.x && pt.x > bmin.x
+            && pt.y < bmax.y && pt.y > bmin.y)
+        {
+            if (t < lowest_t)
+            {
+                lowest_t = t;
+                point = pt;
+            }
+            collision = true;
+        }
+    }
+    
+    // -X intersection
+    N = vec3f(1.0f, 0.0f, 0.0f);
+    d = bmin.x;
+    t = -(dot(r.origin, N) + d) / dot(r.direction, N);
+    pt = r.origin + t * r.direction;
+
+    if (fabsf(t) > eps)
+    {
+        if (pt.y < bmax.y && pt.y > bmin.y
+            && pt.z < bmax.z && pt.z > bmin.z)
+        {
+            if (t < lowest_t)
+            {
+                lowest_t = t;
+                point = pt;
+            }
+            collision = true;
+        }
+    }
+    
+    // -Y intersection
+    N = vec3f(0.0f, 1.0f, 0.0f);
+    d = bmin.y;
+    t = -(dot(r.origin, N) + d) / dot(r.direction, N);
+    pt = r.origin + t * r.direction;
+
+    if (fabsf(t) > eps)
+    {
+        if (pt.x < bmax.x && pt.x > bmin.x
+            && pt.z < bmax.z && pt.z > bmin.z)
+        {
+            if (t < lowest_t)
+            {
+                lowest_t = t;
+                point = pt;
+            }
+            collision = true;
+        }
+    }
+
+    // -Z intersection
+    N = vec3f(0.0f, 0.0f, 1.0f);
+    d = bmin.z;
+    t = -(dot(r.origin, N) + d) / dot(r.direction, N);
+    pt = r.origin + t * r.direction;
+
+    if (fabsf(t) > eps)
+    {
+        if (pt.x < bmax.x && pt.x > bmin.x
+            && pt.y < bmax.y && pt.y > bmin.y)
+        {
+            if (t < lowest_t)
+            {
+                lowest_t = t;
+                point = pt;
+            }
+            collision = true;
+        }
+    }
+    
+    return collision;
+}
+
+
 
 #endif
