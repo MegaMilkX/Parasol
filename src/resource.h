@@ -10,6 +10,12 @@
 #include "datahandle.h"
 #include "resourceasync.h"
 
+enum ResourceLoadMode
+{
+	BLOCKING,
+	ASYNC
+};
+
 template<typename T>
 class Resource
 {
@@ -17,7 +23,7 @@ public:
     static void AddSearchPath(std::string path);
     static void SetFallbackData(T data);
     static ResHdl<T> Create(T data, std::string name);
-    static ResHdl<T> Get(std::string name);
+    static ResHdl<T> Get(std::string name, ResourceLoadMode mode = ASYNC);
     
     static bool ReadFile(std::string name, T& data);
 private:
@@ -65,16 +71,21 @@ ResHdl<T> Resource<T>::Create(T data, std::string name)
 }
 
 template<typename T>
-ResHdl<T> Resource<T>::Get(std::string name)
+ResHdl<T> Resource<T>::Get(std::string name, ResourceLoadMode mode)
 {
     std::lock_guard<std::recursive_mutex> lock(sync);
+	
+	if (mode == ASYNC)
+		if (!ResourceAsync::IsInitialized())
+			ResourceAsync::Init();
+
     if(ResourceExists(name))
     {
         return resources[name];
     }
     else
     {
-        if (ResourceAsync::IsInitialized())
+        if (ResourceAsync::IsInitialized() && mode == ASYNC)
         {
             ResHdl<T> hdl = ResHdl<T>::Create(ResHdl<T>::FallbackData());
             ResourceAsync::Post(ReadResourceTask<T>(hdl, name));
