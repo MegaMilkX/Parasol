@@ -20,6 +20,9 @@ public:
     quat Rotation() { return rotation; }
     vec3f Scale() { return scale; }
 
+    void Position(vec3f& position) { this->position = position; }
+    void Rotation(quat& rotation) { this->rotation = rotation; }
+
     mat4f GetTransform();
 private:
     vec3f position;
