@@ -26,7 +26,7 @@ bool GFXMaterial::ReadMAT(File file)
         {
             if (it->is_string())
             {
-                Shader(Resource<GFXShader>::Get(it->get<std::string>()));
+                Shader(Resource<GFXShader>::Get(it->get<std::string>(), BLOCKING));
             }
         }
         else if (it.key() == "textures")
@@ -35,7 +35,7 @@ bool GFXMaterial::ReadMAT(File file)
             {
                 for (unsigned int i = 0; i < it->size(); ++i)
                 {
-                    Texture2D(Resource<GFXTexture2D>::Get(it->at(i).get<std::string>()), i);
+                    Texture2D(Resource<GFXTexture2D>::Get(it->at(i).get<std::string>(), BLOCKING), i);
                 }
             }
         }
