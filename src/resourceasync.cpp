@@ -7,3 +7,7 @@ std::queue<ResourceTask*> ResourceAsync::task_queue;
 std::recursive_mutex ResourceAsync::sync_queue;
 DWORD ResourceAsync::thread_index;
 HANDLE ResourceAsync::thread_handle;
+
+int ResourceAsync::queuedResourceCount = 0;
+
+size_t ResourceQueueCount() { return ResourceAsync::QueueCount(); }

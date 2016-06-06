@@ -10,6 +10,8 @@
 #include "gfx.h"
 #include "window.h"
 
+size_t ResourceQueueCount();
+
 class ResourceTask
 {
 public:
@@ -46,7 +48,7 @@ protected:
 class ResourceAsync
 {
 public:
-    static bool Init(Window& win)
+    static bool Init()
     {
         thread_handle = CreateThread(0, 0, ResourceAsync::ThreadProc, 0, 0, &thread_index);
         initialized = true;
@@ -68,6 +70,10 @@ public:
         else
             return true;
     }
+	static size_t QueueCount()
+	{
+		return queuedResourceCount;
+	}
     static void PrintDebugInfo()
     {
         std::cout << "ResourceAsync thread status: " << IsAlive() << std::endl;
@@ -78,6 +84,7 @@ public:
     {
         std::lock_guard<std::recursive_mutex> lock(sync_queue);
         task_queue.push(new ReadResourceTask<T>(task));
+		queuedResourceCount++;
         //ResumeThread(thread_handle);
     }
 private:
@@ -88,6 +95,7 @@ private:
     static std::recursive_mutex sync_queue;
     static DWORD thread_index;
     static HANDLE thread_handle;
+	static int queuedResourceCount;
 
     static DWORD WINAPI ThreadProc(LPVOID lpParameter)
     {
@@ -96,16 +104,22 @@ private:
             if (task_queue.size() == 0)
                 continue;
 
+			ResourceTask* task = 0;
+
             {
                 std::lock_guard<std::recursive_mutex> lock(sync_queue);
                 
-                ResourceTask* task = task_queue.front();
+                task = task_queue.front();
                 task_queue.pop();
-                task->Execute();
-                delete task;
+
+				queuedResourceCount--;
             }
 
-            
+			if (task)
+			{
+				task->Execute();
+				delete task;
+			}
         }
         return 0;
     }
