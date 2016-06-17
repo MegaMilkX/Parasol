@@ -74,6 +74,10 @@ bool GFXTexture2D::ReadPNG(File file)
     delete[] img_flipped;
     glFinish();
     
+	dim.x = width;
+	dim.y = height;
+	bpp = 4;
+
     return true;
 }
 
@@ -94,6 +98,10 @@ void GFXTexture2D::Bitmap(unsigned char* data, int w, int h, int bpp)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glGenerateMipmap(GL_TEXTURE_2D);
+
+	dim.x = w;
+	dim.y = h;
+	bpp = bpp;
 }
 
 void GFXTexture2D::Use(unsigned int layer)
