@@ -7,36 +7,17 @@
 
 #include "macro/macro_readers_def.h"
 
+#include "gfxmesh.h"
+#include "gfxshader.h"
 #include "gfxtexture2d.h"
+
+#include "math3f.h"
 
 #include "external/freetype/include/ft2build.h"
 #include "external/freetype/include/freetype/freetype.h"
 #include "external/freetype/include/freetype/ftglyph.h"
 
-#include "external/binpack2d.h"
-
-struct GFXFontGlyph
-{
-    uint32_t index;
-    int size;
-    float h_bearing_x, h_bearing_y;
-    float v_bearing_x, v_bearing_y;
-    float advance_x, advance_y;
-    float w, h;
-    unsigned int bitmap_x, bitmap_y;
-};
-
-class GFXFontGlyphCompare
-{
-public:
-    bool operator()(GFXFontGlyph& a, GFXFontGlyph& b)
-    {
-        if (a.size != b.size)
-            return a.size < b.size;
-        else
-            return a.index < b.index;
-    }
-};
+#include "bitmap-pack/bitmap-pack.h"
 
 class GFXFont
 {
@@ -49,20 +30,52 @@ public:
 
     static GFXFont Create();
 
-    GFXFontGlyph& Glyph(uint32_t character, int size);
+	GFXFont();
 
-    struct Bitmap
-    {
-        void* data;
-        unsigned int w, h;
-        unsigned char bpp;
-    };
+	struct Glyph
+	{
+		uint32_t index;
+		int size;
+		float h_bearing_x, h_bearing_y;
+		float v_bearing_x, v_bearing_y;
+		float advance_x, advance_y;
+		float w, h;
+		unsigned int bitmap_x, bitmap_y;
+		unsigned int bitmap_index;
+		vec2f uv_begin;
+		vec2f uv_end;
+	};
+
+	Glyph* GetGlyph(uint32_t character, int size);
+
+	GFXMesh MakeString(const std::string& string, unsigned char size);
+
+	void DebugDumpAtlasPNG();
+
+	void Bind(unsigned char size);
+	GFXTexture2D GetAtlas(unsigned char size) { return atlases[size]; }
 private:
-    bp2D::BinPacker2D packer;
+	static FT_Face _LoadDefaultFace();
+	static GFXShader _GetDefaultShader();
+
+	BitmapPack pack;
+	FT_Library ftlib;
     FT_Face face;
-    std::map<uint32_t, GFXFontGlyph> glyphs;
-    std::map<uint32_t, Bitmap> bitmaps;
+    std::map<uint32_t, GFXFont::Glyph> glyphs;
+	GFXShader shader;
     std::map<int, GFXTexture2D> atlases;
+};
+
+class GFXFontGlyphCompare
+{
+public:
+	bool operator()(GFXFont::Glyph& a, GFXFont::Glyph& b)
+	{
+		if (a.size != b.size)
+			return a.size < b.size;
+		else
+			return a.index < b.index;
+	}
 };
 
 #endif
