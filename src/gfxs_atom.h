@@ -273,7 +273,7 @@ namespace GFXS
         NO_INPUTS(),
         NO_UNIFORMS(),
         DEF_ATOM_ARGS((Sampler2D)texture_sampler, (Vec2)uv)
-        );
+    );
     DEF_SHADER_ATOM_PIXEL(
         Vec4,
         RGBA,
@@ -281,7 +281,7 @@ namespace GFXS
         NO_INPUTS(),
         NO_UNIFORMS(),
         NO_ARGS()
-        );
+    );
     DEF_SHADER_ATOM_PIXEL(
         Vec4,
         UV_TO_RGBA,
@@ -313,7 +313,7 @@ namespace GFXS
         NO_INPUTS(),
         DEF_ATOM_UNIFORMS(MatrixModel(), MatrixView(), MatrixPerspective()),
         DEF_ATOM_ARGS((Vec3)pos)
-        );
+    );
 
     // =======================
     // Inputs
