@@ -124,7 +124,7 @@ GFXTarget* GFXInit(HWND hWnd)
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    wglSwapIntervalEXT(1);
+    wglSwapIntervalEXT(0);
     
     GFXOldWndProc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)GFXWndProc);
     if(!GFXOldWndProc)
