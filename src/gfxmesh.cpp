@@ -6,8 +6,14 @@
 
 GFXMesh GFXMesh::Create(int usage)
 {
-    GFXMesh mesh;
+	GFXMesh mesh;
     return mesh;
+}
+
+void GFXMesh::Destroy()
+{
+	vertex_buffer.Destroy();
+	index_buffer.Destroy();
 }
   
 void GFXMesh::SetIndices(std::vector<unsigned short> indices)

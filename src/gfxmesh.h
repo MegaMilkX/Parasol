@@ -58,6 +58,7 @@ public:
         DYNAMIC = GL_DYNAMIC_DRAW
     };
     static GFXMesh Create(int usage = STATIC);
+	void Destroy();
     GFXMesh() : vao(0) {}
     template<typename T>
     void SetVertices(std::vector<T> vertices);
