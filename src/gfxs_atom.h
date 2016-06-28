@@ -97,6 +97,45 @@
 #define DEF_SHADER_ATOM_PIXEL(TYPE, NAME, SOURCE, INPUTS, UNIFORMS, ARGS) \
     DEF_SHADER_ATOM(TYPE, NAME, PixelAtom, SOURCE, INPUTS, UNIFORMS, ARGS)
 
+#define SHADER_ATOM_BODY(TYPE, NAME, SOURCE) \
+public: \
+	NAME* Clone() const { return new NAME(*this); } \
+	TYPE* CloneTypeInstance() const { return new TYPE(); } \
+	std::string Evaluate(Stage* stage) \
+    { \
+        std::string eval; \
+        eval += ReferenceName(); \
+        eval += "("; \
+        for(int i = 0; i < ArgumentCount(); ++i) \
+        { \
+            if (i != 0) eval += ", "; \
+            eval += ArgumentSlot(i)->Evaluate(stage); \
+        } \
+        eval += ")"; \
+        stage->AddGlobalLine(Declaration()); \
+        EvalUniforms(stage); \
+        EvalInputs(stage); \
+        return eval; \
+    } \
+	void Link(Stage& stage) \
+    { \
+        for(int i = 0; i < ArgumentCount(); ++i) \
+        { \
+            ArgumentSlot(i)->Link(stage); \
+        } \
+    } \
+    std::string Declaration() \
+    { \
+        std::string func; \
+        func = TYPE().InternalName() + " " + ReferenceName() + ArgumentListDecl() + "{" + SOURCE + "}"; \
+        return func; \
+    } \
+protected: \
+    std::string OriginalRefName() \
+    { \
+        return #NAME; \
+    }
+
 #define DEF_SHADER_ATOM(TYPE, NAME, BASE_ATOM, SOURCE, INPUTS, UNIFORMS, ARGS) \
     class NAME : public BASE_ATOM \
     { \
@@ -143,6 +182,7 @@
     }
 
 #define DEF_ATOM_ARGS(...) \
+	public: \
     FOR_EACH_ARG(ARG_SLOT_DEF, __VA_ARGS__) \
     int ArgumentCount() const { return PP_NARGS(__VA_ARGS__); } \
     Slot* ArgumentSlot(int id) \
@@ -262,10 +302,61 @@ namespace GFXS
     DEF_SHADER_UNIFORM(Mat4, mat4f, MatrixView);
     DEF_SHADER_UNIFORM(Mat4, mat4f, MatrixPerspective);
 
+	// =======================
+	// Inputs
+	// =======================
+
+	DEF_SHADER_INPUT(Vec3, Position);
+	DEF_SHADER_INPUT(Vec4, RGBA);
+	DEF_SHADER_INPUT(Vec3, Normal);
+	DEF_SHADER_INPUT(Vec2, UV);
+
     // =======================
     // Functions
     // =======================
 
+	class MultiplyVec4Vec4 : public Atom
+	{
+	public:
+		MultiplyVec4Vec4() {}
+		MultiplyVec4Vec4(Atom& a, Atom& b)
+		{
+			this->a = a;
+			this->b = b;
+		}
+
+		SHADER_ATOM_BODY(Vec4, MultiplyVec4Vec4, "return a * b;")
+		DEF_ATOM_ARGS((Vec4)a, (Vec4)b)
+	};
+
+	class TextureColor2D : public PixelAtom
+	{
+	public:
+		TextureColor2D() {}
+		TextureColor2D(Texture2D& sampler, Atom& uv)
+		{
+			texture_sampler = sampler;
+			this->uv = uv;
+		}
+
+		SHADER_ATOM_BODY(Vec4, TextureColor2D, "return texture2D(texture_sampler, uv);")
+		DEF_ATOM_ARGS((Sampler2D)texture_sampler, (Vec2)uv)
+	};
+
+	class TextureColor2DRedAlpha : public PixelAtom
+	{
+	public:
+		TextureColor2DRedAlpha() {}
+		TextureColor2DRedAlpha(Texture2D& sampler, Atom& uv)
+		{
+			texture_sampler = sampler;
+			this->uv = uv;
+		}
+
+		SHADER_ATOM_BODY(Vec4, TextureColor2DRedAlpha, "vec4 c = texture2D(texture_sampler, uv); return vec4(1.0, 1.0, 1.0, c.r);")
+		DEF_ATOM_ARGS((Sampler2D)texture_sampler, (Vec2)uv)
+	};
+	/*
     DEF_SHADER_ATOM_PIXEL(
         Vec4,
         TextureColor2D,
@@ -273,15 +364,7 @@ namespace GFXS
         NO_INPUTS(),
         NO_UNIFORMS(),
         DEF_ATOM_ARGS((Sampler2D)texture_sampler, (Vec2)uv)
-    );
-    DEF_SHADER_ATOM_PIXEL(
-        Vec4,
-        RGBA,
-        "return vec4(1.0, 0.0, 0.0, 1.0);",
-        NO_INPUTS(),
-        NO_UNIFORMS(),
-        NO_ARGS()
-    );
+    );*/
     DEF_SHADER_ATOM_PIXEL(
         Vec4,
         UV_TO_RGBA,
@@ -315,13 +398,7 @@ namespace GFXS
         DEF_ATOM_ARGS((Vec3)pos)
     );
 
-    // =======================
-    // Inputs
-    // =======================
-
-    DEF_SHADER_INPUT(Vec3, Position);
-    DEF_SHADER_INPUT(Vec3, Normal);
-    DEF_SHADER_INPUT(Vec2, UV);
+    
 
     
 }
