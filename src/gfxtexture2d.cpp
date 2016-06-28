@@ -4,7 +4,7 @@
 #include <SOIL\SOIL.h>
 #include "math3f.h"
 
-#include <iostream>
+#include "gfx-sprite.h"
 
 GFXTexture2D GFXTexture2D::Create()
 {
@@ -13,8 +13,18 @@ GFXTexture2D GFXTexture2D::Create()
     return texture;
 }
 
+int GFXTexture2D::AddGFXSpriteMapPath()
+{
+	std::string path = Resource<GFXTexture2D>::GetSearchPath(0);
+	if(path.size() > 0)
+		Resource<GFXSpriteMap>::AddSearchPath(path);
+	return 0;
+}
+
 bool GFXTexture2D::ReadPNG(File file)
 {
+	static int foo = AddGFXSpriteMapPath();
+
     file.Seek(0, File::BEGIN);
     unsigned int bytesRead;
     unsigned char* data = file.Read(file.Size(), bytesRead);
@@ -77,6 +87,11 @@ bool GFXTexture2D::ReadPNG(File file)
 	dim.x = width;
 	dim.y = height;
 	bpp = 4;
+
+	//====================
+
+	sprite_map = Resource<GFXSpriteMap>::Get(file.Name(), BLOCKING);
+	sprite_map->AddSpriteMesh(*this, "__full", vec4i(0, 0, dim.x, dim.y), vec2i(0, 0));
 
     return true;
 }

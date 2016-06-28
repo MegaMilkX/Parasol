@@ -7,6 +7,9 @@
 
 #include "math3f.h"
 
+#include "resource.h"
+
+class GFXSpriteMap;
 class GFXTexture2D
 {
 public:
@@ -22,12 +25,16 @@ public:
     
     void Use(unsigned int layer = 0);
 
-	vec2i GetDimensions() { return dim; }
+	vec2i GetDimensions() const { return dim; }
 	unsigned char GetBPP() { return bpp; }
+
+	ResHdl<GFXSpriteMap> SpriteMap() { return sprite_map; }
 private:
-  unsigned int buffer;
-  vec2i dim;
-  unsigned char bpp;
+	static int AddGFXSpriteMapPath();
+	unsigned int buffer;
+	vec2i dim;
+	unsigned char bpp;
+	ResHdl<GFXSpriteMap> sprite_map;
 };
 
 #endif
