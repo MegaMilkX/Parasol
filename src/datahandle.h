@@ -10,6 +10,7 @@ class ResHdl
 public:
     ResHdl() : handle(0){}
     DATA* operator->();
+	DATA& operator*();
     void Release();
 
     static ResHdl<DATA> Create();
@@ -56,6 +57,16 @@ DATA* ResHdl<DATA>::operator->()
     if (magic_storage[index] != magic)
         return &default_data;
     return &(data_storage[index]);
+}
+
+template<typename DATA>
+DATA& ResHdl<DATA>::operator*()
+{
+	if (index >= data_storage.size())
+		return default_data;
+	if (magic_storage[index] != magic)
+		return default_data;
+	return (data_storage[index]);
 }
 
 template<typename DATA>
