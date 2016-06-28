@@ -2,7 +2,6 @@
 #include <iostream>
 int InputMouse::x, InputMouse::y;
 int InputMouse::rel_x, InputMouse::rel_y;
-Action* InputMouse::move_action = 0;
 
 #define RID_COUNT 2
 #define RID_MOUSE 0x02
@@ -11,6 +10,8 @@ Action* InputMouse::move_action = 0;
 HWND targetWindow;
 WNDPROC OldWndProc;
 RAWINPUTDEVICE rid[RID_COUNT];
+
+input_event_handler eventHandler = 0;
 
 enum KEY_STATE
 {
@@ -45,17 +46,22 @@ LRESULT CALLBACK InputWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 int yPosRel = raw->data.mouse.lLastY;
 
                 InputMouse::_updRel(xPosRel, yPosRel);
-                InputMouse::_triggerMoveAction();
+				if (eventHandler)
+					eventHandler(InputEvent(InputEvent::MOUSEMOVE, 0));
             }
             else if (raw->header.dwType & RIM_TYPEKEYBOARD)
             {
                 if (raw->data.keyboard.Flags == RI_KEY_MAKE)
                 {
                     kbKeyState[raw->data.keyboard.VKey] = KEY_STATE::DOWN;
+					if (eventHandler)
+						eventHandler(InputEvent(InputEvent::DOWN, raw->data.keyboard.VKey));
                 }
                 else if (raw->data.keyboard.Flags & RI_KEY_BREAK)
                 {
                     kbKeyState[raw->data.keyboard.VKey] = KEY_STATE::UP;
+					if (eventHandler)
+						eventHandler(InputEvent(InputEvent::UP, raw->data.keyboard.VKey));
                 }
                 /*
                 if(raw->data.keyboard.Message == WM_KEYDOWN)
@@ -73,7 +79,7 @@ LRESULT CALLBACK InputWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-bool InputInit(HWND hWnd)
+bool InputInit(HWND hWnd, input_event_handler handler)
 {
     // Replacing the window procedure with our own one
     OldWndProc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)InputWndProc);
@@ -96,6 +102,8 @@ bool InputInit(HWND hWnd)
         return false;
 
     targetWindow = hWnd;
+
+	eventHandler = handler;
    
     return true;
 }
@@ -135,13 +143,6 @@ float InputMouse::GetYNorm()
     RECT rect;
     GetClientRect(targetWindow, &rect);
     return (y / (float)(rect.bottom - rect.top));
-}
-
-void InputMouse::SetMoveCallback(Action& act)
-{
-    if (move_action)
-        delete move_action;
-    move_action = act.clone();
 }
 
 bool InputKB::Key(unsigned char key)
