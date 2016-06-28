@@ -1,5 +1,5 @@
 #include "file.h"
-
+#include <iostream>
 File File::Create(std::string path, File::MODE mode)
 {
     OFSTRUCT ofstruct;
@@ -8,6 +8,13 @@ File File::Create(std::string path, File::MODE mode)
     DWORD dwFileSizeHigh = 0;
     DWORD dwFileSizeLow = GetFileSize(file.file, &dwFileSizeHigh);
     file.sz = dwFileSizeLow | (__int64)dwFileSizeHigh << 32;
+
+	file.path = path;
+	size_t first = path.find_last_of("\\");
+	if (first == path.npos)
+		first = 0;
+	size_t last = path.find_last_of(".");
+	file.name = path.substr(first + 1, last - first - 1);
     return file;
 }
 
@@ -19,6 +26,13 @@ File File::Open(std::string path, File::MODE mode)
     DWORD dwFileSizeHigh = 0;
     DWORD dwFileSizeLow = GetFileSize(file.file, &dwFileSizeHigh);
     file.sz = dwFileSizeLow | (__int64)dwFileSizeHigh << 32;
+
+	file.path = path;
+	size_t first = path.find_last_of("\\");
+	if (first == path.npos)
+		first = 0;
+	size_t last = path.find_last_of(".");
+	file.name = path.substr(first + 1, last - first - 1);
     return file;
 }
 

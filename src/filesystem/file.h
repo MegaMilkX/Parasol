@@ -37,6 +37,8 @@ public:
     void Seek(unsigned int dist, SEEKFROM from = BEGIN);
     void Close();
     size_t Size() { return sz; }
+	std::string Name() { return name; }
+	std::string Path() { return path; }
 protected:
     struct Buffer
     {
@@ -58,6 +60,8 @@ protected:
 
     HANDLE file;
     size_t sz;
+	std::string name;
+	std::string path;
 };
 
 template<typename T>
