@@ -189,6 +189,10 @@ inline vec4f normalize(const vec4f &a){
     return a / a.length();
 }
 
+inline float distance(const vec3f &a, const vec3f &b) {
+	return qsqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
+}
+
 
 ///////////////////////////////////////////////
 //Matrices
