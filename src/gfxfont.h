@@ -8,7 +8,7 @@
 #include "macro/macro_readers_def.h"
 
 #include "gfxmesh.h"
-#include "gfxshader.h"
+#include "gfxmaterial.h"
 #include "gfxtexture2d.h"
 
 #include "math3f.h"
@@ -19,6 +19,7 @@
 
 #include "bitmap-pack/bitmap-pack.h"
 
+class GFXString;
 class GFXFont
 {
 public:
@@ -31,6 +32,26 @@ public:
     static GFXFont Create();
 
 	GFXFont();
+
+	struct Vertex
+	{
+		VERTEX
+		(
+			(VertexAttrib::Position<0>) position,
+			(VertexAttrib::RGBA<0>) color,
+			(VertexAttrib::UV<0>) uv
+		)
+	};
+
+	enum ALIGN
+	{
+		LEFT = 1,
+		RIGHT = 2,
+		TOP = 4,
+		BOTTOM = 8,
+		HCENTER = LEFT | RIGHT,
+		VCENTER = TOP | BOTTOM
+	};
 
 	struct Glyph
 	{
@@ -46,36 +67,44 @@ public:
 		vec2f uv_end;
 	};
 
-	Glyph* GetGlyph(uint32_t character, int size);
+	class GFXFontGlyphCompare
+	{
+	public:
+		bool operator()(const GFXFont::Glyph& a, const GFXFont::Glyph& b) const
+		{
+			if (a.size != b.size)
+				return a.size < b.size;
+			else
+				return a.index < b.index;
+		}
+	};
 
-	GFXMesh MakeString(const std::string& string, unsigned char size);
+	Glyph GetGlyph(uint32_t character, int size);
 
-	void DebugDumpAtlasPNG();
+	void MakeString(GFXString* gfxstring, const std::string& string, unsigned char size, int align = LEFT | TOP);
+
+	void DebugDumpAtlasPNG(unsigned char size, const std::string& filename);
 
 	void Bind(unsigned char size);
 	GFXTexture2D GetAtlas(unsigned char size) { return atlases[size]; }
+
+	friend GFXString;
 private:
 	static FT_Face _LoadDefaultFace();
 	static GFXShader _GetDefaultShader();
 
-	BitmapPack pack;
+	void _RegString(GFXString* ptr) { strings.insert(ptr); }
+	void _UnregString(GFXString* ptr) { strings.erase(ptr); }
+
+	std::set<GFXString*> strings;
+
 	FT_Library ftlib;
     FT_Face face;
-    std::map<uint32_t, GFXFont::Glyph> glyphs;
+	std::set<GFXFont::Glyph, GFXFontGlyphCompare> glyphs;
 	GFXShader shader;
+	std::map<int, BitmapPack> packs;
     std::map<int, GFXTexture2D> atlases;
-};
-
-class GFXFontGlyphCompare
-{
-public:
-	bool operator()(GFXFont::Glyph& a, GFXFont::Glyph& b)
-	{
-		if (a.size != b.size)
-			return a.size < b.size;
-		else
-			return a.index < b.index;
-	}
+	std::map<int, bool> atlas_dirty;
 };
 
 #endif
