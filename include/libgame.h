@@ -13,7 +13,9 @@
 #include "../src/gfx-line.h"
 
 #include "../src/gfxfont.h"
-#include "../src/gfxtext.h"
+#include "../src/gfx-string.h"
+
+#include "../src/gfx-sprite.h"
 
 #include "../src/input.h"
 
