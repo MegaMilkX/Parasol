@@ -50,13 +50,21 @@ Window Window::Create(LPCWSTR name, int w, int h)
     {
         return window;
     }
+
+	RECT rect;
+	rect.left = 0;
+	rect.top = 0;
+	rect.right = w;
+	rect.bottom = h;
+
+	AdjustWindowRectEx(&rect, WS_OVERLAPPEDWINDOW, false, 0);
     
     hWnd = CreateWindowEx(
         0,
         name,
         name,
         WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, w, h,
+        CW_USEDEFAULT, CW_USEDEFAULT, rect.right - rect.left, rect.bottom - rect.top,
         NULL, NULL, hInstance, NULL);
         
     if(hWnd == NULL)
