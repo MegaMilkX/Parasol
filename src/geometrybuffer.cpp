@@ -11,6 +11,11 @@ GeometryBuffer GeometryBuffer::Create(unsigned int target, unsigned int usage_hi
     return gb;
 }
 
+void GeometryBuffer::Destroy()
+{
+	glDeleteBuffers(1, &buffer);
+}
+
 bool GeometryBuffer::Data(void* data, size_t sz)
 {
     glBindBuffer(target, buffer);
