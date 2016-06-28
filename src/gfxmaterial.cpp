@@ -39,6 +39,22 @@ bool GFXMaterial::ReadMAT(File file)
                 }
             }
         }
+		else if (it.key() == "depth_test")
+		{
+			depth_test = true;
+			if (it->is_boolean())
+			{
+				depth_test = it->get<bool>();
+			}
+		}
+		else if (it.key() == "alpha_blend")
+		{
+			alpha_blend = false;
+			if (it->is_boolean())
+			{
+				alpha_blend = it->get<bool>();
+			}
+		}
     }
     return true;
 }

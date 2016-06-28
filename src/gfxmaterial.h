@@ -19,6 +19,8 @@ public:
 
     static GFXMaterial Create();
 
+	GFXMaterial() : depth_test(true), alpha_blend(false) {}
+
     struct IValue
     {
         std::string name;
@@ -47,9 +49,23 @@ public:
             textures.resize(layer + 1);
         textures[layer] = texture;
     }
+	void DepthTest(bool value) { depth_test = value; }
+	void AlphaBlend(bool value) { alpha_blend = value; }
+
+	ResHdl<GFXTexture2D> Texture2D(unsigned short index) { if (textures.size() > 0) return textures[index]; else return ResHdl<GFXTexture2D>(); }
 
     void Bind()
     {
+		if (depth_test)
+			glEnable(GL_DEPTH_TEST);
+		else
+			glDisable(GL_DEPTH_TEST);
+
+		if (alpha_blend)
+			glEnable(GL_BLEND);
+		else
+			glDisable(GL_BLEND);
+
         for (unsigned int i = 0; i < textures.size(); ++i)
             textures[i]->Use(i);
         for (unsigned int i = 0; i < values.size(); ++i)
@@ -60,6 +76,8 @@ private:
     ResHdl<GFXShader> shader;
     std::vector<ResHdl<GFXTexture2D>> textures;
     std::vector<IValue*> values;
+	bool depth_test;
+	bool alpha_blend;
 };
 
 template<typename T>
