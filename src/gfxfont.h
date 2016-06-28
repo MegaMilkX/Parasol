@@ -86,12 +86,12 @@ public:
 	void DebugDumpAtlasPNG(unsigned char size, const std::string& filename);
 
 	void Bind(unsigned char size);
-	GFXTexture2D GetAtlas(unsigned char size) { return atlases[size]; }
+	ResHdl<GFXTexture2D> GetAtlas(unsigned char size) { return atlases[size]; }
 
 	friend GFXString;
 private:
 	static FT_Face _LoadDefaultFace();
-	static GFXShader _GetDefaultShader();
+	static ResHdl<GFXMaterial> _GetDefaultShader();
 
 	void _RegString(GFXString* ptr) { strings.insert(ptr); }
 	void _UnregString(GFXString* ptr) { strings.erase(ptr); }
@@ -101,9 +101,9 @@ private:
 	FT_Library ftlib;
     FT_Face face;
 	std::set<GFXFont::Glyph, GFXFontGlyphCompare> glyphs;
-	GFXShader shader;
+	ResHdl<GFXMaterial> material;
 	std::map<int, BitmapPack> packs;
-    std::map<int, GFXTexture2D> atlases;
+    std::map<int, ResHdl<GFXTexture2D>> atlases;
 	std::map<int, bool> atlas_dirty;
 };
 

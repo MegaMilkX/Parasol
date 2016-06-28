@@ -43,10 +43,12 @@ FT_Face GFXFont::_LoadDefaultFace()
 	return face;
 }
 
-GFXShader GFXFont::_GetDefaultShader()
+ResHdl<GFXMaterial> GFXFont::_GetDefaultShader()
 {
 	static bool first_time = true;
 	static GFXShader shader;
+	static ResHdl<GFXShader> shader_hdl;
+	static ResHdl<GFXMaterial> material_hdl;
 	if (first_time)
 	{
 		shader = GFXShader::Create();
@@ -67,6 +69,14 @@ GFXShader GFXFont::_GetDefaultShader()
 			)
 		);
 		shader.Compile();
+
+		shader_hdl = ResHdl<GFXShader>::Create(shader);
+
+		GFXMaterial mat;
+		material_hdl = ResHdl<GFXMaterial>::Create(mat);
+		material_hdl->Shader(shader_hdl);
+		material_hdl->AlphaBlend(true);
+		material_hdl->DepthTest(true);
 		/*
 		shader.Color
 		(
@@ -89,13 +99,13 @@ GFXShader GFXFont::_GetDefaultShader()
 		
 		first_time = false;
 	}
-	return shader;
+	return material_hdl;
 }
 
 GFXFont GFXFont::Create()
 {
 	GFXFont f;
-	f.shader = _GetDefaultShader();
+	f.material = _GetDefaultShader();
     return f;
 }
 
@@ -157,7 +167,7 @@ GFXFont::Glyph GFXFont::GetGlyph(uint32_t character, int size)
 void GFXFont::MakeString(GFXString* gfxstring, const std::string& string, unsigned char size, int align)
 {
 	if (atlases.find(size) == atlases.end())
-		atlases[size] = GFXTexture2D::Create();
+		atlases[size] = ResHdl<GFXTexture2D>::Create(GFXTexture2D::Create());
 
 	GFXMesh& mesh = gfxstring->mesh;
 	mesh.Destroy();
@@ -179,8 +189,8 @@ void GFXFont::MakeString(GFXString* gfxstring, const std::string& string, unsign
 	{
 		BitmapPack::Bitmap atlas_bmp = packs[size].Pack(1);
 
-		GFXTexture2D& texture = atlases[size];
-		texture.Bitmap(atlas_bmp.data, atlas_bmp.w, atlas_bmp.h, 1);
+		ResHdl<GFXTexture2D> texture = atlases[size];
+		texture->Bitmap(atlas_bmp.data, atlas_bmp.w, atlas_bmp.h, 1);
 		
 		atlas_dirty[size] = false;
 		
@@ -214,8 +224,8 @@ void GFXFont::MakeString(GFXString* gfxstring, const std::string& string, unsign
 		if (!bmp)
 			continue;
 
-		GFXTexture2D tex = GetAtlas(size);
-		vec2i dim = tex.GetDimensions();
+		ResHdl<GFXTexture2D> tex = GetAtlas(size);
+		vec2i dim = tex->GetDimensions();
 
 		float uva_x = bmp->uv_left / (float)dim.x;
 		float uva_y = bmp->uv_top / (float)dim.y;
@@ -289,8 +299,8 @@ void GFXFont::MakeString(GFXString* gfxstring, const std::string& string, unsign
 
 void GFXFont::Bind(unsigned char size)
 {
-	shader.Bind();
-	atlases[size].Use(0);
+	material->Texture2D(atlases[size], 0);
+	material->Bind();
 }
 
 void GFXFont::DebugDumpAtlasPNG(unsigned char size, const std::string& filename)
