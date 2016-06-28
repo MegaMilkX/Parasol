@@ -21,6 +21,7 @@ class Resource
 {
 public:
     static void AddSearchPath(std::string path);
+	static std::string GetSearchPath(unsigned int index);
     static void SetFallbackData(T data);
     static ResHdl<T> Create(T data, std::string name);
     static ResHdl<T> Get(std::string name, ResourceLoadMode mode = ASYNC);
@@ -47,6 +48,14 @@ void Resource<T>::AddSearchPath(std::string path)
 {
     CreateDirectoryA(path.c_str(), NULL);
     search_paths.push_back(path);
+}
+
+template<typename T>
+std::string Resource<T>::GetSearchPath(unsigned int index)
+{
+	if (search_paths.size() == 0)
+		return "";
+	return search_paths[index];
 }
 
 template<typename T>
@@ -95,13 +104,14 @@ ResHdl<T> Resource<T>::Get(std::string name, ResourceLoadMode mode)
         else
         {
             T data = T::Create();
-            if (!ReadFile(name, data))
+			ResHdl<T> res = ResHdl<T>::Create(data);
+			resources.insert(std::make_pair(name, res));
+
+            if (!ReadFile(name, *res))
             {
                 std::cout << "Load failed\n";
-                return ResHdl<T>();
+                return res;
             }
-            ResHdl<T> res = ResHdl<T>::Create(data);
-            resources.insert(std::make_pair(name, res));
             return res;
         }
     }
