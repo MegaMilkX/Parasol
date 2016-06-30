@@ -39,6 +39,14 @@ bool GFXMaterial::ReadMAT(File file)
                 }
             }
         }
+		else if (it.key() == "render_order")
+		{
+			render_order = 0;
+			if (it->is_number())
+			{
+				render_order = it->get<int>();
+			}
+		}
 		else if (it.key() == "depth_test")
 		{
 			depth_test = true;

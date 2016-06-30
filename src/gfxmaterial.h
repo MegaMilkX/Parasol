@@ -19,7 +19,7 @@ public:
 
     static GFXMaterial Create();
 
-	GFXMaterial() : depth_test(true), alpha_blend(false) {}
+	GFXMaterial() : render_order(0), depth_test(true), alpha_blend(false) {}
 
     struct IValue
     {
@@ -50,7 +50,11 @@ public:
         textures[layer] = texture;
     }
 	void DepthTest(bool value) { depth_test = value; }
+	bool DepthTest() { return depth_test; }
 	void AlphaBlend(bool value) { alpha_blend = value; }
+	bool AlphaBlend() { return alpha_blend; }
+	void RenderOrder(int order) { render_order = order; }
+	int RenderOrder() { return render_order; }
 
 	ResHdl<GFXTexture2D> Texture2D(unsigned short index) { if (textures.size() > 0) return textures[index]; else return ResHdl<GFXTexture2D>(); }
 
@@ -62,9 +66,15 @@ public:
 			glDisable(GL_DEPTH_TEST);
 
 		if (alpha_blend)
+		{
 			glEnable(GL_BLEND);
+			glDepthMask(GL_FALSE);
+		}
 		else
+		{
 			glDisable(GL_BLEND);
+			glDepthMask(GL_TRUE);
+		}
 
         for (unsigned int i = 0; i < textures.size(); ++i)
             textures[i]->Use(i);
@@ -76,6 +86,7 @@ private:
     ResHdl<GFXShader> shader;
     std::vector<ResHdl<GFXTexture2D>> textures;
     std::vector<IValue*> values;
+	int render_order;
 	bool depth_test;
 	bool alpha_blend;
 };

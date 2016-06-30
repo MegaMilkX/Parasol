@@ -67,6 +67,8 @@ public:
 	void Sprite(std::string name);
 	void Sprite(unsigned int index);
 
+	ResHdl<GFXMaterial> Material() { return material; }
+
 	void Render();
 private:
 	ResHdl<GFXMaterial> material;

@@ -28,6 +28,8 @@ public:
 	void Font(const std::string& font_name);
 	void Align(int align);
 
+	ResHdl<GFXMaterial> Material() { return material; }
+
 	void Render();
 
 	friend GFXFont;
