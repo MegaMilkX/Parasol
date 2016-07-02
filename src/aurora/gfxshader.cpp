@@ -167,7 +167,7 @@ bool GFXShader::Validate(std::string& error_str)
         glGetProgramInfoLog(program, info_log_len, NULL, &ShaderErrorMessage[0]);
         error_str = &ShaderErrorMessage[0];
     }
-    return result;
+    return result != 0;
 }
 
 unsigned int GFXShader::CompileStage(GFXS::Stage& stage, unsigned int type)

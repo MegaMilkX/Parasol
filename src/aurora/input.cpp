@@ -121,7 +121,7 @@ void InputUpdate()
         {
             RECT rect;
             GetWindowRect(targetWindow, &rect);
-            SetCursorPos(rect.left + (rect.right - rect.left) * 0.5, rect.top + (rect.bottom - rect.top) * 0.5);
+            SetCursorPos((int)(rect.left + (rect.right - rect.left) * 0.5), (int)(rect.top + (rect.bottom - rect.top) * 0.5));
         }
     }
 }

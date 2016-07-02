@@ -134,12 +134,12 @@ GFXFont::Glyph GFXFont::GetGlyph(uint32_t character, int size)
 		return glyph;
 	}
 
-    glyph.advance_x = face->glyph->advance.x / 64;
-    glyph.advance_y = face->glyph->advance.y / 64;
-    glyph.h_bearing_x = face->glyph->metrics.horiBearingX / 64;
-    glyph.h_bearing_y = face->glyph->metrics.horiBearingY / 64;
-    glyph.v_bearing_x = face->glyph->metrics.vertBearingX / 64;
-    glyph.v_bearing_y = face->glyph->metrics.vertBearingY / 64;
+    glyph.advance_x = (float)(face->glyph->advance.x / 64);
+    glyph.advance_y = (float)(face->glyph->advance.y / 64);
+    glyph.h_bearing_x = (float)(face->glyph->metrics.horiBearingX / 64);
+    glyph.h_bearing_y = (float)(face->glyph->metrics.horiBearingY / 64);
+    glyph.v_bearing_x = (float)(face->glyph->metrics.vertBearingX / 64);
+    glyph.v_bearing_y = (float)(face->glyph->metrics.vertBearingY / 64);
 
     if (face->glyph->format != FT_GLYPH_FORMAT_BITMAP)
     {
@@ -148,8 +148,8 @@ GFXFont::Glyph GFXFont::GetGlyph(uint32_t character, int size)
             return glyph;
     }
 
-    glyph.w = face->glyph->bitmap.width;
-    glyph.h = face->glyph->bitmap.rows;    
+    glyph.w = (float)face->glyph->bitmap.width;
+    glyph.h = (float)face->glyph->bitmap.rows;    
     
     if (face->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY)
     {    

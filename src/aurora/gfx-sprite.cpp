@@ -14,7 +14,7 @@ bool GFXSpriteMap::ReadSPR(File file)
 	ResHdl<GFXTexture2D> tex2d = Resource<GFXTexture2D>::Get(file.Name(), BLOCKING);
 	vec2i tex_size = tex2d->GetDimensions();
 
-	for (int i = 0; i < lines.size(); ++i)
+	for (unsigned int i = 0; i < lines.size(); ++i)
 	{		
 		size_t first_op_bracket = lines[i].find_first_of('[');
 		size_t first_cl_bracket = lines[i].find_first_of(']');
@@ -81,12 +81,15 @@ void GFXSpriteMap::AddSpriteMesh(const GFXTexture2D& tex, const std::string& nam
 	std::vector<Vertex> vertices;
 	std::vector<unsigned short> indices;
 
+	vec4f r((float)rect.x, (float)rect.y, (float)rect.z, (float)rect.w);
+	vec2f o((float)origin.x, (float)origin.y);
+
 	vertices.insert(vertices.end(),
 	{
-		{ vec3f(-origin.x,	-origin.y, 0.0f), vec4f(1.0f, 1.0f, 1.0f, 1.0f), vec2f((rect.x) / (float)tex_size.x, (rect.y) / (float)tex_size.y) },
-		{ vec3f(rect.z - origin.x, -origin.y, 0.0f), vec4f(1.0f, 1.0f, 1.0f, 1.0f), vec2f((rect.z + rect.x) / (float)tex_size.x, (rect.y) / (float)tex_size.y) },
-		{ vec3f(rect.z - origin.x, rect.w - origin.y, 0.0f), vec4f(1.0f, 1.0f, 1.0f, 1.0f), vec2f((rect.z + rect.x) / (float)tex_size.x, (rect.w + rect.y) / (float)tex_size.y) },
-		{ vec3f(-origin.x,	rect.w - origin.y, 0.0f), vec4f(1.0f, 1.0f, 1.0f, 1.0f), vec2f((rect.x) / (float)tex_size.x, (rect.w + rect.y) / (float)tex_size.y) }
+		{ vec3f(-o.x,	-o.y, 0.0f), vec4f(1.0f, 1.0f, 1.0f, 1.0f), vec2f((r.x) / (float)tex_size.x, (r.y) / (float)tex_size.y) },
+		{ vec3f(r.z - o.x, -o.y, 0.0f), vec4f(1.0f, 1.0f, 1.0f, 1.0f), vec2f((r.z + r.x) / (float)tex_size.x, (r.y) / (float)tex_size.y) },
+		{ vec3f(r.z - o.x, r.w - o.y, 0.0f), vec4f(1.0f, 1.0f, 1.0f, 1.0f), vec2f((r.z + r.x) / (float)tex_size.x, (r.w + r.y) / (float)tex_size.y) },
+		{ vec3f(-o.x,	r.w - o.y, 0.0f), vec4f(1.0f, 1.0f, 1.0f, 1.0f), vec2f((r.x) / (float)tex_size.x, (r.w + r.y) / (float)tex_size.y) }
 	});
 
 	indices.push_back(0);

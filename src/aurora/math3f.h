@@ -467,7 +467,7 @@ inline mat4f inverse(const mat4f &mat)
     if (det == 0)
         return mat;
 
-    det = 1.0 / det;
+    det = 1.0f / det;
 
     mat4f out;
     float* outptr = (float*)(&out);
@@ -629,7 +629,7 @@ inline mat4f perspective(float fov, float aspect, float znear, float zfar)
     assert(aspect != 0.0f);
     assert(zfar != znear);
 
-    float tanHalfFovy = tan(fov / 2.0f);
+    float tanHalfFovy = tanf(fov / 2.0f);
 
     mat4f r(0);
     r[0][0] = 1.0f / (aspect * tanHalfFovy);
@@ -673,8 +673,8 @@ inline vec3f rotate(const quat &q, const vec3f &v)
 
 inline quat angleAxis(const float &a, const vec3f &axis)
 {
-    float s = sin(a * 0.5f);
-    return quat(axis.x * s, axis.y * s, axis.z * s, cos(a*0.5f));
+    float s = sinf(a * 0.5f);
+    return quat(axis.x * s, axis.y * s, axis.z * s, cosf(a*0.5f));
 }
 
 ///////////////////////////////////////////////

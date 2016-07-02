@@ -185,10 +185,10 @@ bool BitmapPack::Fit(Bitmap* bitmap, unsigned int slot_index)
 		return result;
     }
 
-    bitmap->uv_left = slot.x;
-    bitmap->uv_bottom = slot.y;
-    bitmap->uv_right = slot.x + slot.w;
-    bitmap->uv_top = slot.y + slot.h;
+    bitmap->uv_left = (float)slot.x;
+    bitmap->uv_bottom = (float)slot.y;
+    bitmap->uv_right = (float)(slot.x + slot.w);
+    bitmap->uv_top = (float)(slot.y + slot.h);
 
     return true;
 }
@@ -231,7 +231,7 @@ void BitmapPack::BitmapBlit(Bitmap& to, Bitmap from)
 		for (unsigned int x = 0; x < from.w; ++x)
 		{
 			unsigned int from_pixel_pos = y * from.w + x;
-			unsigned int to_pixel_pos = (y + from.uv_bottom) * to.w + x + from.uv_left;
+			unsigned int to_pixel_pos = (float)((y + from.uv_bottom) * to.w + x + from.uv_left);
 
 			if(to.bpp == 4)
 				if(from.bpp == 4)

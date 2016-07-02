@@ -87,7 +87,7 @@ public:
         glDrawElements(GL_TRIANGLES, index_count, index_type, 0);
     }
     
-    bool IsValid() { return vao; }
+    bool IsValid() { return vao != 0; }
 private:
     GLuint vao;
     GeometryBuffer vertex_buffer;
