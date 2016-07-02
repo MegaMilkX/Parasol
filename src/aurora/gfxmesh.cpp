@@ -12,8 +12,10 @@ GFXMesh GFXMesh::Create(int usage)
 
 void GFXMesh::Destroy()
 {
-	vertex_buffer.Destroy();
-	index_buffer.Destroy();
+    if(vertex_buffer.Valid())
+        vertex_buffer.Destroy();
+    if(index_buffer.Valid())
+        index_buffer.Destroy();
 }
   
 void GFXMesh::SetIndices(std::vector<unsigned short> indices)
