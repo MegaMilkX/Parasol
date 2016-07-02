@@ -116,7 +116,7 @@ DEF_ENTITY
 					}
 					else if (a->AlphaBlended() == false)
 						return true;
-					else if (a->AlphaBlended() == true)
+					else // if (a->AlphaBlended() == true)
 						return false;
 				}
 				else
