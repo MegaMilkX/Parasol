@@ -170,8 +170,7 @@ void GFXFont::MakeString(GFXString* gfxstring, const std::string& string, unsign
 		atlases[size] = ResHdl<GFXTexture2D>::Create(GFXTexture2D::Create());
 
 	GFXMesh& mesh = gfxstring->mesh;
-	mesh.Destroy();
-	mesh = GFXMesh::Create();
+
 	std::vector<Vertex> vertices;
 	std::vector<unsigned short> indices;
 

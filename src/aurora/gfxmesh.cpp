@@ -23,7 +23,8 @@ void GFXMesh::SetIndices(std::vector<unsigned short> indices)
     if(indices.size() == 0)
         return;
     
-    index_buffer = GeometryBuffer::Create(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+    if(!index_buffer.Valid())
+        index_buffer = GeometryBuffer::Create(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
     index_buffer.Data(indices.data(), sizeof(unsigned short) * indices.size());
     index_count = indices.size();
     index_type = GL_UNSIGNED_SHORT;

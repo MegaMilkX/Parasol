@@ -87,7 +87,7 @@ public:
         glDrawElements(GL_TRIANGLES, index_count, index_type, 0);
     }
     
-    bool IsValid() { return vao != 0; }
+    bool Valid() { return vertex_buffer.Valid(); }
 private:
     GLuint vao;
     GeometryBuffer vertex_buffer;
@@ -107,9 +107,11 @@ void GFXMesh::SetVertices(std::vector<T> vertices)
         return;
     
     vertex_size = sizeof(T);
-    vertex_buffer = GeometryBuffer::Create(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+    if(!vertex_buffer.Valid())
+        vertex_buffer = GeometryBuffer::Create(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
     vertex_buffer.Data(vertices.data(), sizeof(T) * vertices.size());
     size_t offset = 0;
+    attribs.clear();
     for(int i = T::attribCount() - 1; i >= 0; --i)
     {
         AttrInfo info = T::getAttrInfo(i);

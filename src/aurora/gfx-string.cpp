@@ -3,12 +3,14 @@
 GFXString::GFXString()
 	: value(""), size(12), align(LEFT), mesh(GFXMesh::Create(GFXMesh::DYNAMIC))
 {
+	mesh = GFXMesh::Create();
 	font_face->_RegString(this);
 }
 
 GFXString::GFXString(const std::string& str)
 	: value(str), size(12), align(LEFT), mesh(GFXMesh::Create(GFXMesh::DYNAMIC))
 {
+	mesh = GFXMesh::Create();
 	font_face->_RegString(this);
 	value = str;
 	MakeMesh();
@@ -22,6 +24,8 @@ GFXString::~GFXString()
 
 GFXString& GFXString::operator=(const std::string& str)
 {
+	if(!mesh.Valid())
+		mesh = GFXMesh::Create();
 	value = str;
 	MakeMesh();
 	return *this;
