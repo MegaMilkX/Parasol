@@ -1,10 +1,12 @@
 @echo off
 if not defined DevEnvDir (call "%VS140COMNTOOLS%..\..\VC\vcvarsall")
 
+set EXENAME=game
+
 REM Collect all source files
 setlocal enableextensions enabledelayedexpansion
 set SOURCES=
-for /F %%A in ('dir /b /S *.cpp') do set SOURCES=!SOURCES! "%%A"
+for /F %%A in ('dir /b /S *.cpp *.res') do set SOURCES=!SOURCES! "%%A"
 
 set LIBRARIES=kernel32.lib ^
 user32.lib ^
@@ -25,9 +27,13 @@ legacy_stdio_definitions.lib ^
 freetype26MT.lib ^
 SOIL.lib
 
-set /p BUILDINDEX=<build.txt
+if exist build.txt (
+    set /p BUILDINDEX=<build.txt
+    set BUILDDIR=build\!BUILDINDEX!
+) else (
+    set BUILDDIR=build
+)
 
-set BUILDDIR=build\%BUILDINDEX%
 
 mkdir %BUILDDIR%
 mkdir obj
@@ -65,7 +71,7 @@ cl /I F:\libs\openssl-1.0.2d-vs2013\include ^
 /nologo ^
 %SOURCES% ^
 /link ^
-/OUT:"..\%BUILDDIR%\game.exe" ^
+/OUT:"..\%BUILDDIR%\%EXENAME%.exe" ^
 %LIBRARIES% ^
 /MACHINE:X86 ^
 /OPT:REF ^
@@ -81,9 +87,14 @@ cl /I F:\libs\openssl-1.0.2d-vs2013\include ^
 /LIBPATH:"..\lib" ^
 /TLBID:1
 
-if %ERRORLEVEL% GEQ 1 goto failed
+if exist ..\build.txt (
+    if %ERRORLEVEL% EQU 0 (
+        popd
+        set /a BUILDINDEX=!BUILDINDEX!+1
+        >build.txt echo !BUILDINDEX!
+    ) else (
+        popd
+    )
+) else (
     popd
-    set /a BUILDINDEX=%BUILDINDEX%+1
-    >build.txt echo %BUILDINDEX%
-:failed
-    popd
+)
