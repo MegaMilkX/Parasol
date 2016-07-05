@@ -222,3 +222,10 @@ FakesAssemblies/
 
 *.pnproj
 *.pnps
+*.db
+*.sln
+*.vcxproj
+*.filters
+*.lib
+*.sublime-workspace
+lib/lib.txt
