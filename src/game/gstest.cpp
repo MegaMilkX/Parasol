@@ -16,7 +16,7 @@ void GSTest::OnInit()
 	camera2d->Ortho(0.0f, 1280, 0.0f, 720, 0.01f, 100.0f);
 
     cube = scene.Add<Renderable>();
-    cube->Mesh(Resource<GFXMesh>::Get("cube", BLOCKING));
+    cube->Mesh(Resource<GFXMesh>::Get("miku", BLOCKING));
     cube->Material(Resource<GFXMaterial>::Get("material", BLOCKING));
     cube->Translate(-0.3f, 0.0f, 0.0f);
 
@@ -66,24 +66,24 @@ void GSTest::OnSwitch()
 void GSTest::OnUpdate()
 {
     time = GetTickCount();
-    cube->Rotate(0.01f, vec3f(0.0f, 1.0f, 0.0f));
-    cube2->Rotate(0.01f, vec3f(1.0f, 0.0f, 0.0f));
+    cube->Rotate(1 * GameState::DeltaTime(), vec3f(0.0f, 1.0f, 0.0f));
+    cube2->Rotate(1 * GameState::DeltaTime(), vec3f(1.0f, 0.0f, 0.0f));
 
     if (InputKB::Key(0x57))
     {
-        camera->Translate(camera->Forward() * 0.05f, Space::WORLD);
+        camera->Translate(camera->Forward() * 5 * GameState::DeltaTime(), Space::WORLD);
     }
     if (InputKB::Key(0x41))
     {
-        camera->Translate(camera->Left() * 0.05f, Space::WORLD);
+        camera->Translate(camera->Left() * 5 * GameState::DeltaTime(), Space::WORLD);
     }
     if (InputKB::Key(0x53))
     {
-        camera->Translate(camera->Back() * 0.05f, Space::WORLD);
+        camera->Translate(camera->Back() * 5 * GameState::DeltaTime(), Space::WORLD);
     }
     if (InputKB::Key(0x44))
     {
-        camera->Translate(camera->Right() * 0.05f, Space::WORLD);
+        camera->Translate(camera->Right() * 5 * GameState::DeltaTime(), Space::WORLD);
     }
 
     if (GetActiveWindow() == window.GetHandle())

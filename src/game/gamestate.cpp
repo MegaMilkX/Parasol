@@ -4,6 +4,10 @@ std::stack<GameState*> GameState::state_stack;
 Window GameState::window;
 std::map<int, GameState*> GameState::state_cache;
 
+float GameState::dt;
+LARGE_INTEGER GameState::freq;
+LARGE_INTEGER GameState::t1, GameState::t2;
+
 DebugOverlay GameState::debug_overlay;
 
 struct Vert
@@ -101,6 +105,7 @@ bool GameState::Init()
 	Resource<GFXFont>::SetFallbackData(font);
     //===================
     
+    QueryPerformanceFrequency(&freq);
 	debug_overlay.Init();
 
     return true;
@@ -123,7 +128,7 @@ void GameState::Pop()
 
 bool GameState::Update()
 {
-	debug_overlay.PerfCountBegin();
+    QueryPerformanceCounter(&t1);
 
     state_stack.top()->OnUpdate();
     
@@ -134,7 +139,9 @@ bool GameState::Update()
 	
     GFXSwapBuffers();
 
-	debug_overlay.PerfCountEnd();
+    QueryPerformanceCounter(&t2);
+    dt = ((t2.QuadPart - t1.QuadPart) / (float)freq.QuadPart);
+    debug_overlay.SetFPS(1 / dt);
 
     return window.Update();
 }

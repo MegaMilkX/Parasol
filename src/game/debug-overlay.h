@@ -18,31 +18,19 @@ public:
 		fps_text->Text("");
 		fps_text->Align(GFXString::LEFT | GFXString::TOP);
 		fps_text->Translate(10.0f, 720.0f, 0.0f);
-		QueryPerformanceFrequency(&freq);
 	}
 	void Render()
 	{
-		fps_text->Text("fps: " + std::to_string(fps));
 		camera->Render();
 	}
-	void PerfCountBegin() 
+	void SetFPS(unsigned short fps)
 	{
-		QueryPerformanceCounter(&t1);
-	}
-	void PerfCountEnd() 
-	{
-		QueryPerformanceCounter(&t2);
-		unsigned short _fps = (unsigned short)(1 / ((t2.QuadPart - t1.QuadPart) / (float)freq.QuadPart));
-		fps = (fps + _fps) / 2;
+		fps_text->Text("fps: " + std::to_string(fps));
 	}
 private:
 	Scene scene;
 	Camera* camera;
 	TextRenderable* fps_text;
-
-	LARGE_INTEGER freq;
-	LARGE_INTEGER t1, t2;
-	unsigned short fps;
 };
 
 #endif

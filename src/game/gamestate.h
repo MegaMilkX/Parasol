@@ -32,12 +32,18 @@ public:
     static bool Update();
 
 	static void PostInput(InputEvent& e);
+
+    float DeltaTime() { return dt; }
 protected:
     static std::stack<GameState*> state_stack;
 	static std::map<int, GameState*> state_cache;
     static Window window;
 
 	int type_index;
+
+    static float dt;
+    static LARGE_INTEGER freq;
+    static LARGE_INTEGER t1, t2;
 
 	static DebugOverlay debug_overlay;
 };

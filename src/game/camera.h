@@ -111,7 +111,7 @@ DEF_ENTITY
 					{
 						if (a->AlphaBlended() == false)
 							return distance(camera->GetNode()->Position(WORLD), a->GetNode()->Position(WORLD)) < distance(camera->GetNode()->Position(WORLD), b->GetNode()->Position(WORLD));
-						else if (a->AlphaBlended() == true)
+						else // if (a->AlphaBlended() == true)
 							return distance(camera->GetNode()->Position(WORLD), a->GetNode()->Position(WORLD)) > distance(camera->GetNode()->Position(WORLD), b->GetNode()->Position(WORLD));
 					}
 					else if (a->AlphaBlended() == false)
