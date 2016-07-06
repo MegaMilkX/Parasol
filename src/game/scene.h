@@ -21,24 +21,19 @@ public:
     ~Scene();
     // Adds a Node to root with an attached entity of specified type
     template<typename ENTITY>
-    ENTITY* Add();
+    ENTITY*                 Add();
     // Get scene root Node
-    Node* Root() { return &root_node; }
+    Node*                   Root() { return &root_node; }
     // 
-    void AddEntityInstance(Entity* entity);
-    void AddEntityType(int index, Entity* entity);
+    void                    AddEntityInstance(Entity* entity);
+    void                    AddEntityType(int index, Entity* entity);
     //
 	template<typename T>
-	std::vector<T*>& GetEntities();
-    std::vector<Entity*>& GetEntitiesByType(int typeindex);
+	std::vector<T*>&        GetEntities();
+    std::vector<Entity*>&   GetEntitiesByType(int typeindex);
     //
-    Node* RayTest(const ray& r, vec3f& point);
-    std::vector<Node*> RayTest(const ray& r);
-
-    void PrintStats()
-    {
-        std::cout << "Scene " << (int)this << " now has " << entities.size() << " entities of " << entity_by_type.size() << " types" << std::endl;
-    }
+    Node*                   RayTest(const ray& r, vec3f& point);
+    std::vector<Node*>      RayTest(const ray& r);
 private:
     // Can't copy, won't copy
     Scene(const Scene& other) : root_node(this) {}

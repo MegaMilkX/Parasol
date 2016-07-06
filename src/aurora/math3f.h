@@ -751,6 +751,11 @@ struct sphere
     float radius;
 };
 
+struct frustum
+{
+    // TODO
+};
+
 inline ray operator*(const mat4f& m, const ray& r)
 {
     ray res = r;
