@@ -11,6 +11,9 @@ class Entity
 {
 public:
     virtual ~Entity() {}
+
+    virtual void OnAttach() {};
+
     Node* GetNode() { return node; }
     void Translate(float x, float y, float z, Space space = LOCAL);
     void Translate(vec3f trans, Space space = LOCAL);

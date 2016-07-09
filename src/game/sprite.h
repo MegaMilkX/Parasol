@@ -19,6 +19,8 @@ class Sprite : public IRenderable
 	)
 
 public:
+	void OnAttach() {}
+	
 	void SetSprite(std::string map, std::string sprite)
 	{
 		this->sprite = GFXSprite(map, sprite);

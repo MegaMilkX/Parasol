@@ -9,6 +9,8 @@
 
 #include <algorithm>
 
+#include "gfx-scene-system.h"
+
 DEF_ENTITY
 (
     Camera,
@@ -21,6 +23,8 @@ DEF_ENTITY
     ),
     PUBLIC
     (
+        void OnAttach(){}
+
         void ViewportSize(int w, int h)
         {
             screen_size.x = w;
@@ -77,9 +81,10 @@ DEF_ENTITY
 			glDepthMask(GL_TRUE);
 			glClear(GL_DEPTH_BUFFER_BIT);
 
-            node->GetScene()->RenderObjects()->GetVisible(Frustum());
+            Scene* scene = node->GetScene();
+            IGFXSceneSystem* gfxsys = scene->GetSystem<IGFXSceneSystem>();
 
-            /*
+            
             std::vector<IRenderable*>& renderables = node->GetScene()->GetEntities<IRenderable>();
 			
 			std::sort(renderables.begin(), renderables.end(), RenderablePtrCompare(this));
@@ -91,7 +96,7 @@ DEF_ENTITY
             {
                 renderables[i]->Render();
             }
-            */
+
             //glClear(GL_DEPTH_BUFFER_BIT);
             /*
             std::vector<Entity*> shapes = node->GetScene()->GetEntitiesByType(TypeInfo<BoundingShape>::GetId());

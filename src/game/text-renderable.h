@@ -29,6 +29,8 @@ public:
 		VCENTER = TOP | BOTTOM
 	};
 
+	void OnAttach() {}
+
 	void Font(const std::string& font_name) { string.Font(font_name); }
 	void Size(unsigned char size) { string.Size(size); }
 	void Align(int align) { string.Align(align); }
