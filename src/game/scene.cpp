@@ -8,6 +8,16 @@ Scene::~Scene()
         delete entities[i];
 }
 
+void Scene::AddSystemInstance(ISceneSystem* system)
+{
+    systems.push_back(system);
+}
+
+void Scene::AddSystemType(int index, ISceneSystem* system)
+{
+    system_by_type[index] = system;
+}
+
 void Scene::AddEntityInstance(Entity* entity)
 {
     entities.push_back(entity);
