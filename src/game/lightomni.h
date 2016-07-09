@@ -9,7 +9,10 @@ DEF_ENTITY
     LightOmni,
     Entity,
     CONSTRUCTOR(),
-    PUBLIC(),
+    PUBLIC
+    (
+        void OnAttach(){}
+    ),
     PROTECTED()
 );
 
