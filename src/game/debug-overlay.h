@@ -7,11 +7,15 @@
 #include "camera.h"
 #include "text-renderable.h"
 
+#include "gfx-sys-plain.h"
+
 class DebugOverlay
 {
 public:
 	void Init()
 	{
+		scene.AddSystem<GFXSysPlain>();
+
 		camera = scene.Add<Camera>();
 		camera->Ortho(0.0f, 1280, 0.0f, 720, -100.0f, 100.0f);
 		fps_text = scene.Add<TextRenderable>();
