@@ -15,7 +15,7 @@ DEF_ENTITY
 	CONSTRUCTOR(),
 	PUBLIC
 	(
-		virtual void Render() {};
+		virtual void Render() {}
 		virtual int RenderOrder() { return 0; }
 		virtual bool AlphaBlended() { return false; }
 	),
@@ -32,6 +32,8 @@ DEF_ENTITY
     ),
     PUBLIC
     (
+        void OnAttach() {}
+        
         void Mesh(ResHdl<GFXMesh> mesh) { this->mesh = mesh; }
         void Material(ResHdl<GFXMaterial> material) { this->material = material; }
 
