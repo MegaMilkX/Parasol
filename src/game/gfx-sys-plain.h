@@ -7,7 +7,13 @@ class GFXSysPlain : public IGFXSceneSystem
 {
     SCENE_SYS_BODY(GFXSysPlain, IGFXSceneSystem)
 public:
-    
+    void Render(const mat4f& projection, const mat4f& view)
+    {
+        
+    }
+private:
+    std::vector<GFXObject> objects;
+    std::vector<GFXObject> visible_cache;
 };
 
 #endif

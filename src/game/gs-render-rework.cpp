@@ -8,7 +8,7 @@ void GSRenderRework::OnInit()
 
     camera = scene.Add<Camera>();
     camera->Perspective(1.5f, 1280, 720, 0.1f, 100.0f);
-    camera->Translate(0.0f, 0.0f, 5.0f);
+    camera->Translate(0.0f, 1.0f, 3.0f);
 
     Renderable* r = scene.Add<Renderable>();
     r->Mesh(Resource<GFXMesh>::Get("miku"));
